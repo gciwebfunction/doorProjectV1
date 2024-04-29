@@ -326,12 +326,15 @@ class DetailedUserController extends Controller
         //dd($data);
         $this->storeOrCreateUser($data);
 
-        $users = User::orderby('created_at', 'asc')->get();
-
-
+        die(';sdsds');
         Session::flash('success', 'User Created / Updated');
-        return redirect()->route('uview');
 
+        $users = User::orderby('created_at', 'asc')->get();
+        foreach ($users as $user) { $user->user_type = UserProvider::getUserType($user); }
+        //return redirect()->route('uview');
+        return redirect()->action('DetailedUserController@view');
+
+//
 //        return view('user.view',
 //            ['detailedusers' => $users]
 //        );

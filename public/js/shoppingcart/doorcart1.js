@@ -234,6 +234,7 @@
             this.addEventListener('click', function (event) {
 
                 $('select').prop("disabled", true);
+                $('select#main_drop').prop("disabled", true);
 
                 //alert('im called');
                 event.preventDefault();
