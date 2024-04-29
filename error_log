@@ -1,0 +1,2 @@
+[07-Jun-2022 15:27:48 UTC] PHP Warning:  require(/home/iixgjo1wuoy5/qc.gcisoftwaresolutions.com/src/vendor/autoload.php): failed to open stream: No such file or directory in /home/iixgjo1wuoy5/qc.gcisoftwaresolutions.com/src/artisan on line 18
+[07-Jun-2022 15:27:48 UTC] PHP Fatal error:  require(): Failed opening required '/home/iixgjo1wuoy5/qc.gcisoftwaresolutions.com/src/vendor/autoload.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/iixgjo1wuoy5/qc.gcisoftwaresolutions.com/src/artisan on line 18

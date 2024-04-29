@@ -1,0 +1,146 @@
+@import 'bootstrap';
+
+.col-tiny {
+    flex: 0 0 auto;
+    width: 3.33333333%;
+}
+
+.bottom-button-bar {
+    color: #664d03;
+    background-color: #fff3cd;
+    border-color: #ffecb5;
+    margin: 5px auto 0;
+    text-align: right;
+    padding:15px;
+}
+
+.btn {
+}
+
+.btn-primary {
+    border-color: darkgray;
+    background-color: gray;
+}
+
+.btn-primary:hover {
+    background-color: lightgray;
+}
+
+.btn-primary:focus {
+    background-color: #565e64;
+}
+
+.button-gci {
+    border-radius: 10px;
+    border: 1px solid lightgray;
+    padding: .3em;
+
+}
+
+.button-gci:hover {
+    background: lightgray;
+}
+
+.cartButtonDiv {
+    cursor: pointer;
+    width: 160px;
+    border: 1px solid lightgray;
+    border-radius: 10px;
+    margin: 5px auto 0;
+    text-align: center;
+    background: forestgreen
+}
+
+.cartButtonDiv p {
+    text-transform: uppercase;
+    color: antiquewhite;
+    font-weight: bold;
+    padding: 10px 5px;
+}
+
+.cartButtonDiv:hover {
+    background: lightgreen;
+}
+
+.cartButtonDiv p:hover {
+    color: floralwhite;
+}
+
+.categoryTab:hover {
+    background: lightsteelblue;
+    cursor: pointer;
+}
+
+#centerFloatDiv {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: rgba(255, 255, 255, 0.75);
+    width: 100%;
+    height: 100%;
+    padding-top: 100px;
+}
+
+
+.currSign:before {
+    content: '$';
+}
+
+.deleteProduct {
+    background: red;
+    color: white;
+    margin: .1em;
+    padding: .1em;
+}
+
+.deleteX {
+    background-color: red;
+    color: white;
+    text-align: center;
+    vertical-align: center;
+    font-size: x-large;
+    cursor: pointer
+}
+
+.deleteRowMarker {
+    font-size: small;
+    text-align: center;
+    background-color: red;
+    width: 20px;
+    height: 25px;
+    vertical-align: center;
+    cursor: pointer;
+}
+
+.divFloat {
+    margin: 0 auto;
+    background-color: #FFF;
+    color: #000;
+    width: 600px;
+    height: auto;
+    padding: 20px;
+    border: solid 1px #999;
+    -webkit-border-radius: 3px;
+    -webkit-box-orient: vertical;
+    -webkit-transition: 200ms -webkit-transform;
+    box-shadow: 0 4px 23px 5px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(0, 0, 0, 0.15);
+    display: block;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+.wrapper {
+    min-height: 100%;
+
+    /* Equal to height of footer */
+    /* But also accounting for potential margin-bottom of last child */
+    margin-bottom: -50px;
+}
+
+.footer,
+.push {
+    height: 50px;
+}

@@ -1,0 +1,981 @@
+<?php
+
+namespace App\Http\Controllers\Cart;
+
+use App\Http\Controllers\Controller;
+use App\Models\Address;
+use App\Models\Order\Order;
+use App\Models\Order\OrderItem;
+use App\Models\Order\OrderRequest;
+use App\Models\Order\ShoppingCart;
+use App\Models\Order\Status;
+use App\Models\User;
+
+use App\Models\Order\DoorItem;
+
+use App\Models\OrderRequestMessage;
+use App\Models\OrderRequestNote;
+
+use App\Service\CartService;
+use App\Service\OrderService;
+use App\Service\DoorService;
+#use Illuminate\Http\Request;
+
+use http\Env\Request;
+use Illuminate\Support\Facades\Session;
+use DB;
+
+class OrderController extends Controller
+{
+
+    private $cartService;
+    private $doorService;
+    private $orderService;
+    private $shoppingCartService;
+    private $str;
+
+    public function __construct()
+    {
+        //$this->middleware('auth');
+        $this->cartService      = new CartService();
+        $this->orderService     = new OrderService();
+        $this->doorService      = new DoorService();
+        //$this->shoppingCartService = new CartService();
+    }
+
+    // function is used when user submit an order request
+    public function createOrderRequestStepOne($cartId)
+    {
+        $user           = auth()->user();
+
+        // set the status on base of user
+        //dd($user->usertype);
+
+        //dd('sadad');
+
+        $user_tpe           = $user->usertype;
+        $req_generator_type = $user_tpe;
+
+        switch ($user_tpe){
+            case "dealer":
+                $status = '1013';
+                break;
+            case "distributor":
+                $status = '1011';
+                break;
+            default:// for direct dealer
+                $status = '1011';
+            }
+
+
+        $orderRequest   = $this->orderService->createOrderRequest($user, $status, $req_generator_type);
+        $this->cartService->clearUserCart($user);
+
+        Session::flash('success', 'Order request created and passed to the Manufacturer');
+        return redirect()->route('orviewsteptwo', ['orId' => $orderRequest->id]);
+    }
+
+
+    public function createOrderRequestStepTwo()
+    {
+
+        $user = auth()->user();
+
+        $data = request()->validate([
+            'address1'              => 'required',
+            'order_request_id'      => 'required',
+            'zipcode'               => 'required',
+            'city'                  => 'required',
+            'state'                 => 'required',
+            'additionalInformation' => '',
+            'expected_shipping_date'=> 'required'
+        ]);
+
+        $orderRequest        = OrderRequest::findOrFail($data['order_request_id']);
+        $address             = Address::create([
+            'address'        => $data['address1'],
+            'postal_code'    => $data['zipcode'],
+            'city'           => $data['city'],
+            'state'          => $data['state'],
+        ]);
+
+        $request_level      = '2';
+
+        if($user->usertype  == 'dealer') {
+            $request_type   = '3 level';
+            //$request_level  = '2';
+        }elseif($user->usertype == 'Direct dealer' || $user->usertype=='distributor' ){
+            $request_type   = '2 level';
+            //$request_level  = '2';
+        }else{
+            $request_type   = '';
+        }
+
+
+        $time               = $data['expected_shipping_date'].' 11:00:00';
+        $exp_shipping_date  = date('Y-m-d H:i:s' ,strtotime($time));
+
+        $orderRequest->update([
+            'ship_to'                => $address->id,
+            'expected_shipping_date' => $exp_shipping_date,
+            'request_type'           => $request_type,
+            'current_level'          => $request_level
+         ]);
+
+
+        $message             = $data['additionalInformation'];
+        if (!empty($message)) {
+            OrderRequestNote::create([
+                'order_note'        => $data['additionalInformation'],
+                'user_id'           => $user->id,
+                'order_request_id'  => $data['order_request_id']
+            ]);
+        }
+
+        if ($user->hasPermission('u_order_request')) {
+            return redirect()->route('oview');
+        } else {
+            return redirect()->route('dashboard');
+        }
+    }
+
+    public function showOrderRequests()
+    {
+
+        $message = $this->loadSessionMessages(request()->session());
+
+        $orderRequests = OrderRequest::where('user_id', auth()->user()->id)->get();
+
+        return view('orderrequest.view',
+            ['oRs' => $orderRequests,
+                'message' => $message,
+                'status' => Status::all()]);
+    }
+
+    public function showOrders()
+    {
+        $user = auth()->user();
+        //echo '<pre>';var_dump($user->usertype); echo '</pre>';die;
+        $user           = auth()->user();
+        $user_id        = $user->id;
+        $user_tpe       = $user->usertype;
+
+        switch ($user_tpe):
+            case "manufacturer":
+                $orderRequests = OrderRequest::orderBy('id', 'desc')->get();
+                $allOrders     = Order::orderBy('id', 'desc')->get();
+                break;
+            case "distributor":
+                //$orderRequests = OrderRequest::orderBy('id', 'desc')->get();
+                $orderRequests = DB::select("
+                        SELECT order_requests.* 
+                        FROM  order_requests 
+                        INNER JOIN users ON users.id = order_requests.user_id 
+                        WHERE users.id = $user_id OR users.distributor_id = $user_id ");
+
+                $allOrders     =  DB::select("
+                        SELECT orders.* 
+                        FROM  orders 
+                        INNER JOIN users ON users.id = orders.original_order_request_user_id 
+                        WHERE users.id = $user_id OR users.distributor_id = $user_id ");
+                break;
+            case "dealer":
+                $orderRequests =  DB::table('order_requests')->where('user_id', $user_id)->orderBy('id', 'DESC')->get();
+                $allOrders     =  DB::table('orders')->where('original_order_request_user_id', $user_id)->orderBy('id', 'DESC')->get();
+                break;
+            default:// for direct dealer
+                $orderRequests = OrderRequest::orderBy('id', 'desc')->get();
+                $allOrders     = Order::orderBy('id', 'desc')->get();
+                //$allOrders      = \App\Models\Order\Order::all();
+        endswitch;
+        //dd($orderRequests);
+
+
+        return view('order.view', [
+            //'orders'    => \App\Models\Order\Order::all(),
+            'orders'    => $allOrders,
+            'oRs'       => $orderRequests,
+            'status'    => \App\Models\Order\Status::all(),
+            'user'      => $user
+        ]);
+    }
+
+
+    public function orPrint($orId){
+
+        $orderData      = Order::findOrFail($orId);
+        $orderItems     =  DB::table('order_items')->where('order_id', $orId)->get();
+
+        return view('order.orPrint', [
+            'orderData'         => $orderData,
+            'orderItems'        => $orderItems,
+        ]);
+    }
+
+
+    public function test()
+    {
+        $user = auth()->user();
+        //dd($user->id);
+    }
+
+    // from distributor to manufacturer
+    public function UpdateOrderRequest($status, $orRequestId){
+        $user           = auth()->user();
+        $orderRequest   = OrderRequest::findOrFail($orRequestId);
+        $orderRequest->update(['status' => $status]);
+        return redirect()->route('oview');
+    }
+
+    public function editManufacturerform($orRequestId)
+    {
+
+        $user = auth()->user();
+        $orderRequest = OrderRequest::findOrFail($orRequestId);
+
+        // for third level condition
+        if (
+                ( $user->usertype == 'manufacturer' &&  $orderRequest->request_type == '3 level' && $orderRequest->current_level == '3')  or
+                ( $user->usertype == 'distributor'  && $orderRequest->request_type == '3 level' && $orderRequest->current_level == '4')  or
+                ( $user->usertype == 'dealer'  && $orderRequest->request_type == '3 level' && $orderRequest->current_level == '5') or
+                // for two level
+                ( $user->usertype == 'manufacturer' &&  $orderRequest->request_type == '2 level' && $orderRequest->current_level == '2')
+        ) {
+            $orderrequestitems = DB::table('door_items')->where('order_request_id', $orRequestId)->orderBy('id', 'ASC')->get();
+
+            $item_arr       = array();
+            $itemTotal_dis  = 0;
+            $itemTotals     = 0;
+
+            foreach ($orderrequestitems as $k => $item) {
+                $item_arr[$k]['item_id']        = $item->id;
+                $item_arr[$k]['category_name']  = $item->category_name;
+                $item_arr[$k]['door_name']      = $item->door_name;
+                $item_arr[$k]['quantity']       = $item->quantity;
+                $item_arr[$k]['price']          = $item->price;
+                $item_arr[$k]['discount_amount'] = $item->discount_amount;
+                $item_arr[$k]['calculated_discount'] = $item->calculated_discount;
+                $item_arr[$k]['discount_type']  = $item->discount_type;
+                $itemTotal_dis += $item->calculated_discount;
+                $itemTotals += (($item->price*$item->quantity)-$item->calculated_discount);
+
+
+                $orderrequestitems = DB::table('door_item_modifiers')->where('door_item_id', $item->id)->orderBy('id', 'ASC')->get();
+                foreach ($orderrequestitems as $orderrequestitem) {
+                    $key = $orderrequestitem->door_modifier_key;
+                    $item_arr[$k][$key] = $orderrequestitem->door_modifier_value;
+                }
+            }
+
+
+            // get the address of shipping
+            $address_id = $orderRequest->ship_to;
+            $shipping_address = DB::table('addresses')->where('id', $address_id)->get();
+            $shipping_add = $shipping_address[0]->address;
+
+            $OrderRequestNote = DB::table('order_request_notes')->where('order_request_id', $orRequestId)->get();
+            //dd($OrderRequestNote);
+
+            //return view('order.Editmanufacturerform', [
+            return view('order.editManufacturerform', [
+                'orderRequest'      => $orderRequest,
+                'status'            => \App\Models\Order\Status::all(),
+                'user'              => $user,
+                'item_arr'          => $item_arr,
+                'shipping_address'  => $shipping_add,
+                'orderRequestnotes' => $OrderRequestNote,
+                'itemTotal_dis'     => $itemTotal_dis,
+                'itemTotals'        => $itemTotals
+            ]);
+
+        }
+        else{
+            return redirect()->route('oview');
+        }
+    }
+
+
+    public function Editmanufacturerreq(){
+
+
+        $user                   = auth()->user();
+        $data                   = request()->all();
+        $order_request_Id       = $data['order_request_id'];
+
+        $orderReq_data          = OrderRequest::findOrFail($order_request_Id);
+
+        $req_generator_type     = $data['req_generator_type'];
+        $request_type           = $data['request_type'];
+        $current_level          = $data['current_level'];
+        $shipping_fee           = $data['shipping_fee'];
+        $freight_term           = $data['freight_term'];
+        $transportation_mode    = $data['transportation_mode'];
+        $shipping_instruction   = $data['shipping_instruction'];
+        //$shipping_address       = $data['shipping_address'];
+        $package_instruction    = $data['package_instruction'];
+        $total                  = $data['total'];
+
+        // manufacturer edit
+        if (
+            ($request_type == '3 level' && $current_level == '3'  && $user->usertype == 'manufacturer')  or
+            ($request_type == '3 level' && $current_level == '4'  && $user->usertype == 'distributor') or
+            ($request_type == '3 level' && $current_level == '5'  && $user->usertype == 'dealer') or
+            ($request_type == '2 level' && $current_level == '2' && $user->usertype == 'manufacturer')
+        ) {
+            //$po_number              = $data['po_number'];
+
+            if (array_key_exists('add_disc_type', $data)) {
+                $add_disc_val   = $data['add_disc_val'];
+                $add_disc_amt   = $data['add_disc_amt'];
+                $add_disc_type  = $data['add_disc_type'];
+            } else {
+                $add_disc_type  = '';
+                $add_disc_val   = 0;
+                $add_disc_amt   = 0;
+            }
+
+            if (array_key_exists('add_sel', $data)) {
+                $shipping_add = $data['add_sel'];
+
+                // for the address
+                if ($shipping_add == 'Own') {
+                    // get the user address id and save it in order request table
+                    $user_add_pbj = json_decode($user->address, true);
+                    $ship_to = $user_add_pbj['id'];
+                    DB::table('order_requests')->where('id', $order_request_Id)->update([
+                        'ship_to' => $ship_to,
+                        'shipping_address' => $shipping_add,
+                    ]);
+                }
+
+                if ($shipping_add == 'Drop Shipping') {
+                    // make entry of address and save its ref
+                    //Address::create([
+                    $ship_to = DB::table('addresses')->insertGetId([
+                        'address' => $data['dropshipadd'],
+                        'state' => $data['state'],
+                        'city' => $data['city'],
+                        'postal_code' => $data['zip']
+                    ]);
+                    DB::table('order_requests')->where('id', $order_request_Id)->update([
+                        'ship_to' => $ship_to,
+                        'shipping_address' => $shipping_add
+                    ]);
+                }
+            }
+
+
+            // check order request type  nd set status
+            //if ($req_generator_type == 'dealer') {$status = 1014;} else {$status = 1013;}
+
+            //$orderRequest           = OrderRequest::findOrFail($order_request_Id);
+            if($request_type == '2 level' && $current_level == '2' && $user->usertype == 'manufacturer'){
+                $status         = 1013;
+                $current_level  = 3;
+            }else{
+                $status         = $orderReq_data->status;
+                $current_level  = $orderReq_data->current_level;
+            }
+
+            DB::table('order_requests')->where('id', $order_request_Id)->update([
+                'status'                => $status,
+                'current_level'         => $current_level,
+                'add_disc_type'         => $add_disc_type,
+                'add_disc_amt'          => $add_disc_amt,
+                'add_disc_val'          => $add_disc_val,
+                'freight_term'          => $freight_term,
+                'transportation_mode'   => $transportation_mode,
+                'shipping_instruction'  => $shipping_instruction,
+                'package_instruction'   => $package_instruction,
+                'shipping_fee'          => $shipping_fee,
+                'total'                 => $total
+                //'po_number'              => $po_number,
+                //'shipping_address'       => $shipping_address
+            ]);
+
+            if (array_key_exists('order_note', $data)) {
+                $order_note = $data['order_note'];
+                if (!empty($order_note)) {
+                    OrderRequestNote::create([
+                        'order_note'        => $order_note,
+                        'user_id'           => $user->id,
+                        'order_request_id'  => $order_request_Id
+                    ]);
+                }
+            }
+
+            if (array_key_exists('message', $data)) {
+                $message = $data['message'];
+                if (!empty($message)) {
+                    OrderRequestMessage::create([
+                        'message'           => $message,
+                        'user_id'           => $user->id,
+                        'order_request_id' => $order_request_Id
+                    ]);
+                }
+            }
+
+            foreach ($data['items'] as $kkk => $item_id) {
+
+                DB::table('door_items')->where('id', $item_id)->update([
+                    'discount_type'         => $data['discount_type'][$kkk],
+                    'discount_amount'       => $data['discount_amount'][$kkk],
+                    'calculated_discount'   => $data['calculated_discount'][$kkk],
+                    'sub_total'             => $data['sub_total'][$kkk]
+                ]);
+            }
+            //dd('sdsdssdsad');
+            //return redirect()->action('OrderController@showOrders');
+            return redirect()->route('oview');
+        }else{
+            return redirect()->route('oview');
+        }
+    }
+
+    public function Editmanufacturerdetailview($orRequestId){
+
+        $user                               = auth()->user();
+        $orderRequest                       = OrderRequest::findOrFail($orRequestId);
+        $orderrequestitems                  = DB::table('door_items')->where('order_request_id', $orRequestId)->orderBy('id', 'ASC')->get();
+
+        $item_arr = array();
+        $sub_total= 0;
+        foreach ($orderrequestitems as $k   => $item) {
+            $item_arr[$k]['item_id']                = $item->id;
+            $item_arr[$k]['category_name']          = $item->category_name;
+            $item_arr[$k]['door_name']              = $item->door_name;
+            $item_arr[$k]['quantity']               = $item->quantity;
+            $item_arr[$k]['price']                  = $item->price;
+            $item_arr[$k]['discount_amount']        = $item->discount_amount;
+            $item_arr[$k]['calculated_discount']    = $item->calculated_discount;
+            $item_arr[$k]['discount_type']          = $item->discount_type;
+//            if(!empty($item->sub_total)){
+//                $item_arr[$k]['sub_total']          = $item->sub_total;
+//            }else{
+
+            $item_arr[$k]['sub_total']          = (($item->price *  $item->quantity) - $item->calculated_discount);
+            $sub_total                          += (($item->price *  $item->quantity) - $item->calculated_discount);
+            //}
+
+
+            $orderrequestitems              = DB::table('door_item_modifiers')->where('door_item_id', $item->id)->orderBy('id', 'ASC')->get();
+            foreach ($orderrequestitems as $orderrequestitem){
+                $key                        = $orderrequestitem->door_modifier_key;
+                $item_arr[$k][$key]         = $orderrequestitem->door_modifier_value;
+            }
+        }
+
+
+        //echo $user->usertype;die;
+        $shoppingCart               = $this->cartService->getUserCart($user->id);
+        $cartView                   = $this->doorService->getDoorViewObjectsForCart($shoppingCart);
+        $cartIgtems                 = $cartView->getDoorViewObjects();
+        //echo $orderRequest->ship_to;die;
+        $address_id                 = $orderRequest->ship_to;
+
+        $shipping_address           = DB::table('addresses')->where('id',$address_id)->get();
+        $shipping_add               = $shipping_address[0]->address;
+
+        $OrderRequestNote           = DB::table('order_request_notes')->where('order_request_id', $orRequestId)->get();
+        $orderRequestmsgs           = DB::table('order_request_messages')->where('order_request_id', $orRequestId)->get();
+
+
+        return view('order.EditManufacturerView', [
+            'orderRequest'          => $orderRequest,
+            'status'                => \App\Models\Order\Status::all(),
+            'user'                  => $user,
+            'doorViewItems'         => $orderrequestitems,
+            'item_arr'              => $item_arr,
+            'shipping_address'      => $shipping_add,
+            'OrderRequestNotes'     => $OrderRequestNote,
+            'orderRequestmsgs'      => $orderRequestmsgs,
+
+            'sub_total'             => $sub_total,
+
+        ]);
+    }
+
+
+
+    // methods for the 3 level
+    public function editManufacturereqconfirm($orReqId){
+
+        $order_req      = OrderRequest::findOrFail($orReqId);
+        //$order_req_data = $order_req->toArray();
+        //$request_type   = $order_req_data['request_type'];
+
+        //dd($order_req_data->doorItems());
+
+
+        if($order_req->request_type == '3 level') {
+            //dd($order_req_data->toArray());
+
+            $user = auth()->user();
+            $user_tpe = $user->usertype;
+
+            switch ($user_tpe) {
+                case "manufacturer":
+                    $status = '1014';
+                    $current_level = 4;
+                    break;
+                case "distributor":
+                    $status = '1015';
+                    $current_level = 5;
+                    break;
+                default:// for direct dealer
+                    $status = '1014';
+                    $current_level = 4;
+            }
+
+            DB::table('order_requests')->where('id', $orReqId)->update([
+                'status' => $status,
+                'current_level' => $current_level,
+            ]);
+            return redirect()->route('oview');
+        }
+
+
+
+        if($order_req->request_type == '2 level') {
+            //manufacturere direct confirm
+            //$order_req
+            //$order = $this->orderService->requestUpdateOrder($order_req_data);
+
+            $order                                  = new Order();
+            $order->created_by_user_id              = auth()->user()->id;
+            $order->original_order_request_user_id  = $order_req->user_id;
+            $order->distributor_id                  = $order_req->distributor_id;
+            $order->dealer_id                       = $order_req->dealer_id;
+            $order->purchase_order_number           = $order_req->po_number;
+            $order->required_shipping_date          = $order_req->expected_shipping_date;
+            $order->total_order_amount              = $order_req->total;
+
+
+            $order->add_disc_type                   = $order_req->add_disc_type;
+            $order->add_disc_val	                = $order_req->add_disc_val;
+            $order->add_disc_amt	                = $order_req->add_disc_amt;
+            $order->shipping_address	            = $order_req->shipping_address;
+            $order->shipping_fee		            = $order_req->shipping_fee;
+            $order->save();
+
+            // time to move the order requests items
+            $orderrequestitems                  = DB::table('door_items')->where('order_request_id', $orReqId)->get();
+
+            foreach($orderrequestitems as $doorItem):
+
+                $orderItem                      = new OrderItem();
+                $orderItem->order_id            = $order->id;
+                $orderItem->item                = $doorItem->door_name;
+                $orderItem->prod_type           = $doorItem->category_name;
+                $orderItem->door_type           = $doorItem->door_type_pretty_name;
+                $orderItem->quantity            = $doorItem->quantity;
+                $orderItem->unit_price          = $doorItem->price;
+
+                $orderItem->discount_type        = $doorItem->discount_type;
+                $orderItem->calculated_discount	    = $doorItem->calculated_discount		;
+                $orderItem->discount_amount      = $doorItem->discount_amount;
+
+                // get records of door item modifiers
+                $doorItemModifiers          = DB::table('door_item_modifiers')->where('door_item_id', $doorItem->id)->get();
+                foreach ($doorItemModifiers as $modifier) :
+                    if ($modifier->door_modifier_key == 'SIZE') {
+                        $split = explode(' ', $modifier->door_modifier_value);
+                        $orderItem->width = $split[0];
+                        $orderItem->height = $split[1];
+                    } else if ($modifier->door_modifier_key == 'COLOR') {
+                        $orderItem->color_code = $modifier->door_modifier_value;
+                    } else if ($modifier->door_modifier_key == 'HANDLING') {
+
+                    } else if ($modifier->door_modifier_key == 'HANDLE') {
+                        $orderItem->handle = $modifier->door_modifier_value;
+                    } else if ($modifier->door_modifier_key == 'LOCK') {
+                        $orderItem->lock_set_type = $modifier->door_modifier_value;
+                    } else if ($modifier->door_modifier_key == 'GLASS_OPTION') {
+                        $orderItem->glass_material = $modifier->door_modifier_value;
+                    } else if ($modifier->door_modifier_key == 'GLASS_DEPTH') {
+                        $orderItem->glass_thickness = $modifier->door_modifier_value;
+                    } else if ($modifier->door_modifier_key == 'FRAME') {
+                        $orderItem->door_frame = $modifier->door_modifier_value;
+                    }
+                    $orderItem->save();
+                endforeach;
+            endforeach;
+
+            if ($order != null && $order->id > 0) {
+                $order_req->delete();
+            }
+            return redirect()->route('oview', ['oId' => $order->id]);
+        }
+    }
+
+
+    // distributor can confirm request
+    public function Distributor_request_update ( $status , $orReqId){
+
+        //echo $status .',' .$orReqId;die;
+        /*if($status == 'accept'){
+            // make entry in the orders table
+            $orderRequest   = OrderRequest::findOrFail($orReqId);
+
+
+
+            $order                      = new Order();
+            $order->created_by_user_id              = auth()->user()->id;
+            $order->original_order_request_user_id  = $orderRequest->user_id;
+            $order->distributor_id                  = $orderRequest->distributor_id;
+            $order->dealer_id                       = $orderRequest->dealer_id;
+            $order->purchase_order_number           = $orderRequest->po_number;
+            $order->required_shipping_date          = $orderRequest->expected_shipping_date;
+            $order->total_order_amount		        = $orderRequest->total;
+            $order->freight_term		            = $orderRequest->freight_term;
+            $order->transportation_mode			    = $orderRequest->transportation_mode;
+            $order->ship_to			                = $orderRequest->ship_to;
+            $order->save();
+
+
+
+            echo '<pre>';
+            var_dump($orderRequest);
+            echo '</pre>';
+            die;
+
+
+
+
+            $order          = $this->orderService->createOrder($orderRequest);
+
+
+            //echo  $order->id;die;
+//            if ($order != null && $order->id > 0) {
+//                //$orderRequest->delete();
+//            }
+
+        }else{
+            // no entry in db table just reject
+            DB::table('order_requests')->where('id', $orReqId)->update([
+                'status'                 => 1017,
+            ]);
+        //}
+
+        return redirect()->route('oview');
+
+
+        //$orderRequest = OrderRequest::findOrFail();
+        //$orderRequest->update(['status' => 1015]);
+        */
+    }
+
+
+
+    public function showManufOrderRequests()
+    {
+        $user = auth()->user();
+
+        $orderRequests = OrderRequest::all();
+
+        return view('orderrequest.manufview',
+            ['oRs' => $orderRequests,
+                'status' => Status::all()]);
+    }
+
+    public function submitOrderRequest($orId)
+    {
+        $user = auth()->user();
+
+        if ($user->hasPermission('u_order_request')) {
+
+            $orderRequest = OrderRequest::findOrFail($orId);
+
+            $orderRequest->update(['status' => 1002]);
+        } else {
+            request()->session()->put('message', 'Only users with ability to update orders are allowed to submit order requests.');
+        }
+
+        return redirect()->route('oview');
+    }
+
+    public function confirmOrderRequest($orId)
+    {
+        //echo $orId;die;
+        $or         = OrderRequest::findOrFail($orId);
+
+        //dd($or->doorItems);
+        $orOwner    = User::FindOrFail($or->user_id);
+        $orderDist  = User::find($or->distributor_id);
+
+        $count = 0;
+        foreach ($or->doorItems as $di) {
+            $count++;
+        }
+        //echo $count.'sdfsf';die;
+
+
+        return view('order.confirmation.stepone', ['or' => $or,
+            'or_owner' => $orOwner->email,
+            'or_dist' => $orderDist,
+            'item_count' => $count]);
+    }
+
+    public function confirmStepOne($orId)
+    {
+        $orderRequest = OrderRequest::findOrFail($orId);
+        $order = '';
+        $user = auth()->user();
+        //dd('sdfsf');
+
+        if ($user->hasPermission('c_order')) {
+
+            $orderRequest = OrderRequest::findOrFail($orId);
+            $order = $this->orderService->createOrder($orderRequest);
+
+            if ($order != null && $order->id > 0) {
+                $orderRequest->delete();
+            }
+
+                return redirect()->route('oview', ['oId' => $order->id]);
+        }
+
+        $_SESSION['message'] = 'Only users with the permission "Create Order" are allowed to convert an order request.';
+
+        if ($user->hasPermission('u_order_request')) {
+            return redirect()->route('oview');
+        } else {
+            return redirect()->route('dashboard');
+        }
+    }
+
+    private function loadSessionMessages($session)
+    {
+        $message = $session->get('message');
+        $session->forget('message');
+
+        return $message;
+    }
+
+    public function createOrderRequestStepTwo_bkk()
+    {
+
+        $user = auth()->user();
+
+        $data = request()->validate([
+            'address1' => 'required',
+            'order_request_id' => 'required',
+            'zipcode' => 'required',
+            'city' => 'required',
+            'state' => 'required',
+            'additionalInformation' => '',
+        ]);
+
+        $tiem               = $data['expected_shipping_date'].' 11:00:00';
+        $exp_shipping_date  = date(strtotime('Y-m-d H:i:s' ,$tiem));
+        $orderRequest       = OrderRequest::findOrFail($data['order_request_id']);
+        $address            = Address::create([
+            'address'       => $data['address1'],
+            'postal_code'   => $data['zipcode'],
+            'city'          => $data['city'],
+            'state'         => $data['state'],
+        ]);
+
+        $orderRequest->update([
+            'ship_to'                => $address->id,
+            'expected_shipping_date' => $exp_shipping_date
+        ]);
+
+        if ($user->hasPermission('u_order_request')) {
+            return redirect()->route('oview');
+        } else {
+            return redirect()->route('dashboard');
+        }
+    }
+
+    // methods for the 3 level
+    public function manufacturerReqconfirm(){
+        $data           = request()->validate([
+            'order_request_id' => 'required',
+        ]);
+
+        $orReqId            = $data['order_request_id'];
+        OrderRequest::findOrFail($orReqId);
+
+        DB::table('order_requests')->where('id', $orReqId)->update([
+            'status'        => 1011,
+            'current_level' => 3,
+        ]);
+        return redirect()->route('oview');
+    }
+
+
+    //confirm order request
+    public function orderReqconfirm($orId){
+
+        $orderRequest   = OrderRequest::findOrFail($orId);
+        //$order          = '';
+        $user           = auth()->user();
+
+        if ($user->hasPermission('c_order')) {
+            $orderRequest   = OrderRequest::findOrFail($orId);
+            $order          = $this->orderService->createOrder($orderRequest);
+
+            if ($order != null && $order->id > 0) {
+                $orderRequest->delete();
+            }
+            return redirect()->route('oview', ['oId' => $order->id]);
+        }
+
+        $_SESSION['message'] = 'Only users with the permission "Create Order" are allowed to convert an order request.';
+
+        if ($user->hasPermission('u_order_request')) {
+            return redirect()->route('oview');
+        } else {
+            return redirect()->route('dashboard');
+        }
+    }
+
+
+    public function rejectOrderrequest($orId){
+        $orderRequest = OrderRequest::findOrFail($orId);
+        $orderRequest->update(['status' => 1017]);
+        return redirect()->route('oview');
+    }
+
+
+
+    public function Editmanufacturerreq_bkkk_crect_three_levl(){
+
+
+        $user                   = auth()->user();
+        $data                   = request()->all();
+        $order_request_Id       = $data['order_request_id'];
+
+        $orderReq_data          = OrderRequest::findOrFail($order_request_Id);
+
+        $req_generator_type     = $data['req_generator_type'];
+        $request_type           = $data['request_type'];
+        $current_level          = $data['current_level'];
+        $shipping_fee           = $data['shipping_fee'];
+        $freight_term           = $data['freight_term'];
+        $transportation_mode    = $data['transportation_mode'];
+        $shipping_instruction   = $data['shipping_instruction'];
+        //$shipping_address       = $data['shipping_address'];
+        $package_instruction    = $data['package_instruction'];
+        $total                  = $data['total'];
+
+        // manufacturer edit
+        if (
+            ($request_type == '3 level' && $current_level == '3'  && $user->usertype == 'manufacturer')  or
+            ($request_type == '3 level' && $current_level == '4'  && $user->usertype == 'distributor') or
+            ($request_type == '3 level' && $current_level == '5'  && $user->usertype == 'dealer') or
+            ($request_type == '2 level' && $current_level == '2' && $user->usertype == 'manufacturer')
+        ) {
+            //$po_number              = $data['po_number'];
+
+            if (array_key_exists('add_disc_type', $data)) {
+                $add_disc_val   = $data['add_disc_val'];
+                $add_disc_amt   = $data['add_disc_amt'];
+                $add_disc_type  = $data['add_disc_type'];
+            } else {
+                $add_disc_type  = '';
+                $add_disc_val   = 0;
+                $add_disc_amt   = 0;
+            }
+
+            if (array_key_exists('add_sel', $data)) {
+                $shipping_add = $data['add_sel'];
+
+                // for the address
+                if ($shipping_add == 'Own') {
+                    // get the user address id and save it in order request table
+                    $user_add_pbj = json_decode($user->address, true);
+                    $ship_to = $user_add_pbj['id'];
+                    DB::table('order_requests')->where('id', $order_request_Id)->update([
+                        'ship_to' => $ship_to,
+                        'shipping_address' => $shipping_add,
+                    ]);
+                }
+
+                if ($shipping_add == 'Drop Shipping') {
+                    // make entry of address and save its ref
+                    //Address::create([
+                    $ship_to = DB::table('addresses')->insertGetId([
+                        'address' => $data['dropshipadd'],
+                        'state' => $data['state'],
+                        'city' => $data['city'],
+                        'postal_code' => $data['zip']
+                    ]);
+                    DB::table('order_requests')->where('id', $order_request_Id)->update([
+                        'ship_to' => $ship_to,
+                        'shipping_address' => $shipping_add
+                    ]);
+                }
+            }
+
+
+            // check order request type  nd set status
+            //if ($req_generator_type == 'dealer') {$status = 1014;} else {$status = 1013;}
+
+            //$orderRequest           = OrderRequest::findOrFail($order_request_Id);
+            if($request_type == '2 level' && $current_level == '2' && $user->usertype == 'manufacturer'){
+                $status = 1008;
+                $current_level = 3;
+            }else{
+                $status         = $orderReq_data->status;
+                $current_level  = $orderReq_data->$current_level;
+
+            }
+
+            DB::table('order_requests')->where('id', $order_request_Id)->update([
+                //'status'        => $status,
+                'add_disc_type'         => $add_disc_type,
+                'add_disc_amt'          => $add_disc_amt,
+                'add_disc_val'          => $add_disc_val,
+                'freight_term'          => $freight_term,
+                'transportation_mode'   => $transportation_mode,
+                'shipping_instruction'  => $shipping_instruction,
+                'package_instruction'   => $package_instruction,
+                'shipping_fee'          => $shipping_fee,
+                'total' => $total
+
+                //'po_number'              => $po_number,
+                //'shipping_address'       => $shipping_address
+            ]);
+
+            if (array_key_exists('order_note', $data)) {
+                $order_note = $data['order_note'];
+                if (!empty($order_note)) {
+                    OrderRequestNote::create([
+                        'order_note' => $order_note,
+                        'user_id' => $user->id,
+                        'order_request_id' => $order_request_Id
+                    ]);
+                }
+            }
+
+            if (array_key_exists('message', $data)) {
+                $message = $data['message'];
+                if (!empty($message)) {
+                    OrderRequestMessage::create([
+                        'message' => $message,
+                        'user_id' => $user->id,
+                        'order_request_id' => $order_request_Id
+                    ]);
+                }
+            }
+
+            foreach ($data['items'] as $kkk => $item_id) {
+
+                DB::table('door_items')->where('id', $item_id)->update([
+                    'discount_type' => $data['discount_type'][$kkk],
+                    'discount_amount' => $data['discount_amount'][$kkk],
+                    'calculated_discount' => $data['calculated_discount'][$kkk],
+                    'sub_total' => $data['sub_total'][$kkk]
+                ]);
+            }
+            //dd('sdsdssdsad');
+            //return redirect()->action('OrderController@showOrders');
+            return redirect()->route('oview');
+        }else{
+            return redirect()->route('oview');
+        }
+    }
+
+}
