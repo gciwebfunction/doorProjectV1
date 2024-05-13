@@ -1,14 +1,11 @@
 <x-app-layout>
 
     <style>
-        .form-label{
-            font-size: 11px !important;
-        }
-        #orderRequestTable tr {
-            text-align: center;
-            vertical-align: top;
-        }
+        .form-label{ font-size: 10px !important; }
 
+        #orderRequestTable tr { text-align: center; vertical-align: top; }
+
+        .form-control { font-size: 0.8rem }
     </style>
     <div class="container" style="min-width: 1600px;margin-left: 1px; margin-right: 1px;">
         @php
@@ -35,7 +32,7 @@
 
                         <div class="card-body">
                             <div class="row">
-                                <table class="table-striped" id="orderRequestTable" style="width:100%; margin: 0px 5px 11px 0px; font-size:11px">
+                                <table class="table-striped" id="orderRequestTable" style="width:100%; margin: 0px 5px 11px 0px; font-size:10px">
                                     <tr>
                                         <th>No.</th>
                                         <th>Category </th>

@@ -2,32 +2,23 @@
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Order Details')  }}
+
         </h2>
     </x-slot>
     <div class="container py-4">
-        <h4 style="text-align: center">Confirmed Orders</h4>
+        <h4 style="text-align: center">
+            Confirmed Orders  @php // echo $user->usertype ; die;@endphp
+        </h4>
         <div class="container">
             <table class="table-striped" id="orderTable">
                 <thead>
                 <tr>
-                    <th>
-                        Order #
-                    </th>
-                    <th>
-                        Order Date
-                    </th>
-                    <th>
-                        Order Total
-                    </th>
-                    <th>
-                        Status
-                    </th>
-                    <th>
-                        Print
-                    </th>
-                    <th>
-                        Delete
-                    </th>
+                    <th>Order #</th>
+                    <th>Order Date</th>
+                    <th>Order Total</th>
+                    <th>Status</th>
+                    <th>Print</th>
+                    <th>Delete</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -158,7 +149,7 @@
                                 @if($user->usertype == 'distributor' &&  $or->current_level == 3 && $or->request_type == '2 level' )
                                     |<a style="border-radius: 2px; border: 1px solid black; color:white;background-color: green; padding: 3px" href="/o/editManufacturereqconfirm/{{$or->id}}">Confirm</a>|<a style="border-radius: 2px; border: 1px solid black; background-color: red;color:white; padding: 3px" href="/o/rejectOrderrequest/{{$or->id}}">Reject</a>
                                 @endif
-                                @if($user->usertype == 'dealer-direct' &&  $or->current_level == 3 && $or->request_type == '2 level' )
+                                @if($user->usertype == 'direct_dealer' &&  $or->current_level == 3 && $or->request_type == '2 level' )
                                     |<a style="border-radius: 2px; border: 1px solid black; background-color: green; color:white;padding: 3px" href="/o/editManufacturereqconfirm/{{$or->id}}">Confirm</a>|<a style="border-radius: 2px; border: 1px solid black; background-color: red; color:white;padding: 3px" href="/o/rejectOrderrequest/{{$or->id}}">Reject</a>
                                 @endif
                                 {{-- 2nd level flow ends  --}}

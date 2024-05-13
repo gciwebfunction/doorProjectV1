@@ -116,13 +116,13 @@ class DetailedUserController extends Controller
 
     public function create()
     {
-        $user = auth()->user();
 
+        $user = auth()->user();
 
         //dd($user->usertype);
         return view('user.create', [
                 'user_own_type' => $user->usertype,
-                'distributors'  => User::where([
+                'distributors' => User::where([
                     ['disabled', '=', '0'],
                     ['usertype', '=', 'distributor'],
                 ])->get(),
@@ -326,15 +326,12 @@ class DetailedUserController extends Controller
         //dd($data);
         $this->storeOrCreateUser($data);
 
-        die(';sdsds');
-        Session::flash('success', 'User Created / Updated');
-
         $users = User::orderby('created_at', 'asc')->get();
-        foreach ($users as $user) { $user->user_type = UserProvider::getUserType($user); }
-        //return redirect()->route('uview');
-        return redirect()->action('DetailedUserController@view');
 
-//
+
+        Session::flash('success', 'User Created / Updated');
+        return redirect()->route('uview');
+
 //        return view('user.view',
 //            ['detailedusers' => $users]
 //        );

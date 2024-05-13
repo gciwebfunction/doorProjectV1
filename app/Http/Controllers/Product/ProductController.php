@@ -311,19 +311,18 @@ class ProductController extends Controller
         }
         return redirect('p');
     }
-
+    
     public function updateSortProduct(Request $request)
     {
         $productId     = $request->idd;
         $sortOrder     = $request->sort_order;
         $product       = Product::findOrFail($productId);
-//echo sort_order;die;
+        //echo sort_order;die;
         $product->update([
             'id'            => $productId,
             'sort_order'    => $sortOrder,
         ]);
     }
-
 
 
 }

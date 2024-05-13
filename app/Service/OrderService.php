@@ -145,7 +145,7 @@ class OrderService
                 } else if ($modifier->door_modifier_key == 'COLOR') {
                     $orderItem->color_code = $modifier->door_modifier_value;
                 } else if ($modifier->door_modifier_key == 'HANDLING') {
-                    $orderItem->door_handling = $modifier->door_modifier_value;
+
                 } else if ($modifier->door_modifier_key == 'HANDLE') {
                     $orderItem->handle = $modifier->door_modifier_value;
                 } else if ($modifier->door_modifier_key == 'LOCK') {
@@ -156,7 +156,7 @@ class OrderService
                     $orderItem->glass_thickness = $modifier->door_modifier_value;
                 } else if ($modifier->door_modifier_key == 'FRAME') {
                     $orderItem->door_frame = $modifier->door_modifier_value;
-                } else if ($modifier->door_modifier_key == 'FRAME_THICKNESS_OPTION') {
+                }else if ($modifier->door_modifier_key == 'FRAME_THICKNESS_OPTION') {
                     $orderItem->frame_thickness = $modifier->door_modifier_value;
                 } else if ($modifier->door_modifier_key == 'SILL_OPTION') {
                     $orderItem->sill_option = $modifier->door_modifier_value;
@@ -167,7 +167,6 @@ class OrderService
                 }else if ($modifier->door_modifier_key == 'HANDLE_COLOR_OPTION') {
                     $orderItem->handle_color = $modifier->door_modifier_value;
                 }
-                //} else if ($modifier->door_modifier_key == 'FRAME') {
             }
 
             $orderItem->save();
@@ -221,7 +220,7 @@ class OrderService
                 } else if ($modifier->door_modifier_key == 'COLOR') {
                     $orderItem->color_code = $modifier->door_modifier_value;
                 } else if ($modifier->door_modifier_key == 'HANDLING') {
-                    $orderItem->door_handling = $modifier->door_modifier_value;
+
                 } else if ($modifier->door_modifier_key == 'HANDLE') {
                     $orderItem->handle = $modifier->door_modifier_value;
                 } else if ($modifier->door_modifier_key == 'LOCK') {

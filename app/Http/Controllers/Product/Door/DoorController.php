@@ -155,7 +155,8 @@ class DoorController extends Controller
             'doorFinishPrices' => $doorFinishPrices]);
     }
 
-    public function storeDoorFlowStepOne(Request $request)
+
+public function storeDoorFlowStepOne(Request $request)
     {
         //die('sadadd');
 
@@ -217,18 +218,80 @@ class DoorController extends Controller
             //$image = $this->getImage($imageInfo);
 
             $file       = $request->file('door_type_image-' . $i);
-            $kksad = $file->getClientOriginalName();
-            $file->move(public_path('storage/product_image'), $kksad);
-            $image = \DB::table('images')->insertGetId([
-                    'image_path' => $kksad,
-                    'created_at' => $created_at,
-                    'updated_at' => $created_at,
+            if(!empty($file->getClientOriginalName())){
+                $kksad = $file->getClientOriginalName();
+                
+                
+                
+                $file->move(public_path('storage/product_image'), $kksad);
+                $image = \DB::table('images')->insertGetId([
+                        'image_path' => $kksad,
+                        'created_at' => $created_at,
+                        'updated_at' => $created_at,
+                    ]);
+    
+                $doorNameTypes[$i] = DoorName::create([
+                    'door_id' => $door->id,
+                    'door_name_or_type' => $doorName,
+                    'image_id' => $image,
                 ]);
+            }
+        }
 
+        return redirect()->route('pcreatedoorflowsteptwo',
+            ['id' => $door->id]);
+    }
+
+    public function storeDoorFlowStepOne_bkkk()
+    {
+        //die('sadadd');
+
+        $data = request()->all();
+        //dd($data);
+
+        $doorCategory       = $data['product_category'];
+        $doorType           = $data['door_type'];
+        $doorName           = $data['door_name'];
+        $panelCount         = $data['panel_count'];
+        $officialDoorType   = $this->getDoorType($doorType, $doorCategory);
+        $door               = Door::create([
+                                'name' => $doorName,
+                                'door_type_id' => $officialDoorType->id,
+                                'category_id' => $doorCategory,
+                                'panel_count' => $panelCount
+                            ]);
+
+        $doorNameTypes      = [];
+
+        $optionalSpecifierCount = $data['optional_select_count'];
+        $typeCount          = $data['type_count'];
+
+        if ($optionalSpecifierCount > 0 && $data['additional_door_spec-0'] != '') {
+            for ($i = 0; $i < $optionalSpecifierCount; $i++) {
+                $optSpec = AdditionalOption::create([
+                    'name' => $data['additional_door_spec-' . $i],
+                    'group_name' => 'OPT_SPEC',
+                    'price' => 0,
+                    'is_per_panel' => 0,
+                    'is_per_light' => 0,
+                    'door_id' => $door->id,
+                    'door_measurement_id' => -1,
+                    'image_id' => -1,
+                ]);
+            }
+        }
+
+        for ($i = 0; $i < $typeCount; $i++) {
+            $doorName = $data['door_name_type-' . $i];
+            $imageInfo = '';
+            if (isset($data['door_type_image-' . $i])) {
+                $imageInfo = $data['door_type_image-' . $i];
+            }
+            $image = $this->getImage($imageInfo);
             $doorNameTypes[$i] = DoorName::create([
                 'door_id' => $door->id,
                 'door_name_or_type' => $doorName,
-                'image_id' => $image,
+                'image_id' => $image->id,
             ]);
         }
 
@@ -694,7 +757,6 @@ class DoorController extends Controller
         //echo $data['sdl_option_price'][317];die;
 
         //if($con_sld_na_ar >=1){
-
         if($arr_vale>=1){
             for ($i = 0; $i < $arr_vale; $i++) {
 
@@ -1120,9 +1182,12 @@ class DoorController extends Controller
             }
         }
 
+
+
+
+
         return redirect()->route('peditdoorflowsteptwo', ['id' => $door->id]);
     }
-
 
 
     public function updateSortDoor(Request $request)
@@ -1138,5 +1203,4 @@ class DoorController extends Controller
             'sort_order'    => $sortOrder,
         ]);
     }
-
 }

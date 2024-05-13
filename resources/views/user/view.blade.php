@@ -39,7 +39,8 @@
             <th>Name</th>
             <th>Email</th>
             <th>User Type</th>
-            <th class="text-center">Disabled</th>
+            <th class="text-center">Disabled </th>
+            <th> Edit</th>
             </thead>
             @foreach($detailedusers as $detaileduser)
                 <tr class="" style="cursor: pointer">
@@ -66,6 +67,9 @@
                             <span style="color: green;">ENABLED</span>
                         </td>
                     @endif
+                    <td class="table-cell text-center">
+                        <span style="color: green;">EDIT</span>
+                    </td>
                 </tr>
             @endforeach
 

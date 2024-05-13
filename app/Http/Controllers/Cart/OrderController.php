@@ -211,13 +211,42 @@ class OrderController extends Controller
 
     public function orPrint($orId){
 
-        $orderData      = Order::findOrFail($orId);
-        $orderItems     =  DB::table('order_items')->where('order_id', $orId)->get();
+
+        // get the address of ship
+
+        $orderData                   = Order::findOrFail($orId);
+        //dd($orderData);
+        $ship_to_add                 = $orderData->ship_to;
+
+        $order_requester_id          = $orderData->original_order_request_user_id;
+
+        // get the detail of user which generated the order for buyer info
+        $buyer_address               = DB::table('addresses')->where('user_id', $order_requester_id)->orderBy('id', 'ASC')->get();
+        //dd($shipping_address);
+        $buyer_addres                = $buyer_address[0]->address??null;
+        $buyer_addre2                = $buyer_address[0]->address2??null;
+        $buyer_state                 = $buyer_address[0]->state??null;
+        $buyer_city                  = $buyer_address[0]->city??null;
+        $buyer_postal_code           = $buyer_address[0]->postal_code??null;
+
+
+
+        // get the shipping details
+        $ship_address               = DB::table('addresses')->where('id', $ship_to_add)->orderBy('id', 'ASC')->get();
+        $ship_addres                = $ship_address[0]->address??null;
+        $ship_addre2                = $ship_address[0]->address2??null;
+        $ship_state                 = $ship_address[0]->state??null;
+        $ship_city                  = $ship_address[0]->city??null;
+        $ship_postal_code           = $ship_address[0]->postal_code??null;
+
+
+
+        $orderItems                     =  DB::table('order_items')->where('order_id', $orId)->get();
         //dd($orderItems);
-        $doorItem       = DB::table('door_items')->where('order_id', $orId)->limit(1)->get()->toArray();
+        $doorItem                       = DB::table('door_items')->where('order_id', $orId)->limit(1)->get()->toArray();
         // get the order request id from the door_items table
-        $order_request_id      = $doorItem[0]->order_request_id;
-        $orderRequestProducts               = DB::table('cart_items')->where('order_request_id', $order_request_id)->orderBy('id', 'ASC')->get();
+        $order_request_id               = $doorItem[0]->order_request_id;
+        $orderRequestProducts           = DB::table('cart_items')->where('order_request_id', $order_request_id)->orderBy('id', 'ASC')->get();
 
         //'orderRequestProducts'  => $orderRequestProducts
 
@@ -226,16 +255,32 @@ class OrderController extends Controller
         //die;
         $user                     =  auth()->user();
         $user_id                  = $user->id;
-        $userContact              = DB::table('user_contacts')->where('user_id', $user_id)->orderBy('id', 'ASC')->get()->toArray();
+        $userContact              = DB::table('user_contacts')->where('user_id', $order_requester_id)->orderBy('id', 'ASC')->get()->toArray();
 
-        //dd();
+        $buyer_primay_phone      = $userContact[0]->primary_phone;
+        //dd($userContact);
 
         return view('order.orPrint', [
             'orderData'             => $orderData,
             'orderItems'            => $orderItems,
             'orderRequestProducts'  => $orderRequestProducts,
             'userData'              => $user,
-            'userContact'            => $userContact,
+            'userContact'           => $userContact,
+
+
+            'buyer_addres'          => $buyer_addres,
+            'buyer_addres2'         => $buyer_addre2,
+            'buyer_city'            => $buyer_city,
+            'buyer_state'           => $buyer_state,
+            'buyer_postal_code'     => $buyer_postal_code,
+            'buyer_primary_phone'   => $buyer_primay_phone,
+
+            'ship_addres'           => $ship_addres,
+            'ship_addres2'           => $ship_addre2,
+            'ship_city'             => $ship_city,
+            'ship_state'            => $ship_state,
+            'ship_postal_code'      => $ship_postal_code,
+
         ]);
     }
 
@@ -266,7 +311,7 @@ class OrderController extends Controller
             ( $user->usertype == 'sales' &&  $orderRequest->request_type == '3 level' && $orderRequest->current_level == '3')  or
             ( $user->usertype == 'sales_user' &&  $orderRequest->request_type == '3 level' && $orderRequest->current_level == '3')  or
 
-
+            
             ( $user->usertype == 'distributor'  && $orderRequest->request_type == '3 level' && $orderRequest->current_level == '4')  or
             ( $user->usertype == 'dealer'  && $orderRequest->request_type == '3 level' && $orderRequest->current_level == '5') or
             // for two level
@@ -488,13 +533,15 @@ class OrderController extends Controller
 
     public function Editmanufacturerdetailview($orRequestId){
 
-        $user                     = auth()->user();
-        $user_id                  = $user->id;
+        $user                               = auth()->user();
+        $user_id                            = $user->id;
+
         //$userContact                        = DB::table('user_contacts')->where('user_id', $user_id)->orderBy('id', 'ASC')->get()->toArray();
 
         //$userContact->ship_to;
 
         $disti_address            = DB::table('addresses')->where('user_id',$user_id)->get();
+        
         //dd($disti_address);
         $disti_addr               = $disti_address[0]->address??null;
         $disti_addr2              = $disti_address[0]->address2??null;
@@ -502,10 +549,11 @@ class OrderController extends Controller
         $disti_pcode              = $disti_address[0]->postal_code??null;
         $disti_st                 = $disti_address[0]->state??null;
         $addd_comp                = $disti_addr.' '.$disti_addr2.' '.$disti_city.' '.$disti_pcode.' '.$disti_st;
-
-
+        //echo $addd_comp;die;
+        
         $orderRequest                       = OrderRequest::findOrFail($orRequestId);
         $orderrequestitems                  = DB::table('door_items')->where('order_request_id', $orRequestId)->orderBy('id', 'ASC')->get();
+
 
         $item_arr = array();
         $sub_total= 0;
@@ -574,7 +622,22 @@ class OrderController extends Controller
     public function Editmanufacturerdetailprint($orRequestId){
 
         //die('sdfsf');
-        $user                               = auth()->user();
+
+        $user                     = auth()->user();
+        $user_id                  = $user->id;
+        //$userContact                        = DB::table('user_contacts')->where('user_id', $user_id)->orderBy('id', 'ASC')->get()->toArray();
+
+        //$userContact->ship_to;
+
+        $disti_address            = DB::table('addresses')->where('user_id',$user_id)->get();
+        //dd($disti_address);
+        $disti_addr               = $disti_address[0]->address??null;
+        $disti_addr2              = $disti_address[0]->address2??null;
+        $disti_city               = $disti_address[0]->city??null;
+        $disti_pcode              = $disti_address[0]->postal_code??null;
+        $disti_st                 = $disti_address[0]->state??null;
+        $addd_comp                = $disti_addr.' '.$disti_addr2.' '.$disti_city.' '.$disti_pcode.' '.$disti_st;
+
         $orderRequest                       = OrderRequest::findOrFail($orRequestId);
         $orderrequestitems                  = DB::table('door_items')->where('order_request_id', $orRequestId)->orderBy('id', 'ASC')->get();
 
@@ -635,11 +698,13 @@ class OrderController extends Controller
             'OrderRequestNotes'     => $OrderRequestNote,
             'orderRequestmsgs'      => $orderRequestmsgs,
             'sub_total'             => $sub_total,
-            'orderRequestProducts'  => $orderRequestProducts
+            'orderRequestProducts'  => $orderRequestProducts,
+            'distiryAdd'            => $addd_comp
         ]);
     }
-
-
+    
+    
+    
     // methods for the 3 level
     public function editManufacturereqconfirm($orReqId){
 
@@ -649,6 +714,8 @@ class OrderController extends Controller
 
         //dd($order_req_data->doorItems());
 
+
+        //dd($order_req);
         if($order_req->request_type == '3 level') {
             //dd($order_req_data->toArray());
 
@@ -697,8 +764,11 @@ class OrderController extends Controller
             $order->add_disc_val	                = $order_req->add_disc_val;
 
             $order->add_disc_amt	                = $order_req->add_disc_amt;
-            $order->shipping_address	            = $order_req->shipping_address;
+            //$order->shipping_address	            = $order_req->shipping_address;
+            $order->ship_to	                        = $order_req->ship_to;
             $order->shipping_fee		            = $order_req->shipping_fee;
+            $order->shipping_instruction		    = $order_req->shipping_instruction;
+
             $order->mull_fee		                = $order_req->mull_fee;
             $order->save();
             $ordreR_od                              = $order->id;
@@ -788,10 +858,10 @@ class OrderController extends Controller
 
             //order_requests
             // NOTE :DONT delete the order_request just change the status
-            /*if ($order != null && $order->id > 0) {
+            if ($order != null && $order->id > 0) {
                 //$order_req->delete();
                 DB::table('order_requests')->where('id', $orReqId)->delete();
-            }*/
+            }
             return redirect()->route('oview', ['oId' => $ordreR_od]);
         }
     }

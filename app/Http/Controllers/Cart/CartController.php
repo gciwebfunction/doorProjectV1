@@ -96,9 +96,13 @@ class CartController extends Controller
                 'assemble_knock'                => '',
                 'door_handling_select'          => '',
 
+
+
+
+
+
             ]);
         } else {
-
             $data = request()->validate([
                 'door_name_type_id_selection'   => 'required',
                 'door_size_select'              => 'required',
@@ -130,10 +134,11 @@ class CartController extends Controller
 
 
             ]);
-            //dd($data);
+            
+        //dd($data);    
         }
 
-
+        
         $shoppingCart = '';
 
         $user = Auth::user();
@@ -185,6 +190,7 @@ class CartController extends Controller
             $glassDepth = Product\Door\AdditionalOption::find($data['glass_depth_select']);
         if (isset($data['glass_option_select']))
             $glassOption = Product\Door\AdditionalOption::find($data['glass_option_select']);
+
 
         if (isset($data['additional_notes']))  $notes = $data['additional_notes'];
 
@@ -250,7 +256,8 @@ class CartController extends Controller
         }
         $this->saveDoorItemModifier($doorItem->id, 'COLOR', $color->color ?? '', true, 1, $finish->price ?? 0);
         //if (!$isgliding) {
-        if(isset($data['door_handling_select'])){
+        //if($data['door_handling_select']){
+        if(isset($data['door_handling_select'])){    
             $handling = Product\Door\DoorHandling::find($data['door_handling_select']);
             //$frame = Product\Door\DoorFrame::find($data['door_frame_select']);
             $this->saveDoorItemModifier($doorItem->id, 'HANDLING', $handling->handling ?? '', false, 0, 0);

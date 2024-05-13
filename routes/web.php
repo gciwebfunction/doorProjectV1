@@ -149,6 +149,7 @@ Route::post('/u/update', 'App\Http\Controllers\DetailedUserController@update')
 
 Route::get('/u/view', 'App\Http\Controllers\DetailedUserController@view')
     ->middleware('permissions:r_user')->name('uview');
+    //->middleware('permissions:r_user')->name('uview');
 
 Route::get('/u/{id}', '\App\Http\Controllers\DetailedUserController@show')
     ->middleware('groups:manuf-grp')->name('ushow');;

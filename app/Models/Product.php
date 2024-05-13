@@ -23,7 +23,7 @@ class Product extends Model
         'image_name',
         'prod_description',
         'category_id',
-        'sort_order',
+        'sort_order'
     ];
 
     public function category()

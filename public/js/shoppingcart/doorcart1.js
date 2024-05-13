@@ -234,7 +234,7 @@
             this.addEventListener('click', function (event) {
 
                 $('select').prop("disabled", true);
-                $('select#main_drop').prop("disabled", true);
+                $('select#main_drop').prop("disabled", false);
 
                 //alert('im called');
                 event.preventDefault();
@@ -725,6 +725,8 @@
                         iddddd      = select.id;
                         iddddd_comb =iddddd+'Error';
                         if(iddddd!='main_drop' || iddddd != 'glassblindOptionSelect' || iddddd != 'glassOptionSelect'){
+
+                            $("#blindGlassliteOptionSelectError").hide();
                             $("#"+iddddd_comb).show();
                             return false;
                             event.preventDefault();
@@ -940,6 +942,18 @@
                 }
             }
 
+
+            // blid color option code needs debug  / wait for it
+            /*hingecolorOptionSelectLength  = $( "#blindOptionSelectError" ).length;
+            hingecolorOptionSelectLengtV  = $( "#blindOptionSelectError" ).val();
+            if ( hingecolorOptionSelectLength )   {
+                if( !hingecolorOptionSelectLengtV  || hingecolorOptionSelectLengtV == '') {
+                    $('#hingecolorOptionSelectError').show();
+                    return false;
+                    event.preventDefault();
+                    e.preventDefault();
+                }
+            }*/
 
 
             //event.preventDefault();

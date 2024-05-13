@@ -14,7 +14,7 @@
             }
 
             table #checkin td{
-                border-bottom: 2px solid black;
+                /*border-bottom: 2px solid black;*/
             }
 
             h3,h5,h5 {
@@ -31,6 +31,7 @@
     <body style="margin: 0 auto;">
         <div class="content">
             <table style="vertical-align: top">
+
                 <tr>
                     <td colspan="5"><br><h2>Order Details</h2></td>
                 </tr>
@@ -38,53 +39,58 @@
                     <td colspan="5"><br></td>
                 </tr>
                 <tr>
-                    <td colspan="2"><h3>Order #: {{$orderData->id}}</h3></td>
-                    <td>&nbsp;&nbsp;</td>
-                    <td colspan="2"><h3>Status #: Processing</h3></td>
+                    <td colspan="5"><h3>Order #: {{$orderData->id}} (Expected Shipping Date:
+                @php
+                    echo  date(('m/d/Y'), strtotime($orderData->manufacturer_shipping_date)).')';
+                @endphp
+                </h3></td>
                 </tr>
                 <tr>
-                    <td colspan="5"><h4 style="text-align: left;">Manufacturer Information</h4></td>
+                    <td colspan="5"><h3>Status #: Processing</h3></td>
+{{--                    <td colspan="3"><h3 style="text-align: left;">Company PO# {{$orderData->purchase_order_number}}</h3></td>--}}
                 </tr>
 
-                <tr>
-                    <td colspan="5"><br></td>
-                </tr>
-                <tr>
-                    <td><h5 style="text-align: right;">Tel: {{$userContact[0]->primary_contact??''}}</h5></td>
-                    <td><h5 style="text-align: right;">Fax: {{$userContact[0]->primary_fax??''}}</h5></td>
-                    <td  colspan="5">&nbsp;</td>
-                </tr>
-                <tr>
-                    <td><h5 style="text-align: right;">Toll Free Tel:</h5></td>
-                    <td><h5 style="text-align: right;">Fax:</h5></td>
-                    <td><h5 style="text-align: right;">Ship to:</h5></td>
-                    <td><h5 style="text-align: right;">Contact Person:</h5></td>
-                    <td><h5 style="text-align: right;">Sales person code:</h5></td>
-                </tr>
-                <tr>
-                    <td><h5 style="text-align: right;">S/O:</h5></td>
-                    <td><h5 style="text-align: right;">Contact Person:</h5></td>
-                    <td  colspan="3">&nbsp;</td>
-                </tr>
-                <tr>
-                    <td align="left"  colspan="3"><h5 style="text-align: left;">Company PO# {{$orderData->purchase_order_number}}</h5></td>
-                    <td><h5 style="text-align: right;">Tel:</h5></td>
-                    <td><h5 style="text-align: right;">Fax:</h5></td>
 
+                <tr><td colspan="5">
+                        <table>
+                            <tr>
+                                <td colspan="2"><h3>Buyer Information</h3></td>
+                                <td colspan="2"><h3>Shipping Information</h3></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    Address: {{$buyer_addres}}<br>
+                                    Address2: {{$buyer_addres2}}<br>
+                                    State: {{$buyer_state}}<br>
+                                    City: {{$buyer_city}}<br>
+                                    Postal Code: {{$buyer_postal_code}}<br>
+                                    Phone: {{$buyer_primary_phone}}<br>
+                                </td>
+                                <td colspan="2">
+                                    Address: {{$ship_addres}}<br>
+                                    Address2: {{$ship_addres2}}<br>
+                                    State: {{$ship_state}}<br>
+                                    City: {{$ship_city}}<br>
+                                    Postal Code: {{$ship_postal_code}}<br>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
                 </tr>
-                <tr>
-                    <td colspan="5" style="text-align: left;"  colspan="3"><h5 >Address</h5></td>
-                </tr>
-                <tr>
-                    <td colspan="5"><h2>Doors</h2></td>
-                </tr>
+
+
+
+{{--                    <td align="left"  colspan="3"><h5 style="text-align: left;">Company PO# {{$orderData->purchase_order_number}}</h5></td>--}}
+
+                <tr><td colspan="5"><hr></td> </tr>
+                <tr><td colspan="5"><h2>Doors</h2></td> </tr>
+
                 <tr>
                     <td colspan="5">
                         <table id="checkin">
-                        <tr style="border-bottom: 2px solid black;vertical-align: top">
-
-
-
+                            <tr><td colspan="24"><hr></td> </tr>
+{{--                            <tr style="border-bottom: 2px solid black;vertical-align: top">--}}
+                            <tr style="vertical-align: top">
 
 
                             <th>No.</th>
@@ -98,14 +104,12 @@
 {{--                            <th>Door Frame</th>--}}
 
                             <th>Door Handling</th>
-
                             <th>DP Option</th>
                             <th>Blind</th>
                             <th>Glass Grid</th>
                             <th>3/4 Lite</th>
                             <th>Handle</th>
                             <th>Lock</th>
-
                             <th>Frame Thickness</th>
                             <th>Sill</th>
                             <th>Screen</th>
@@ -119,9 +123,10 @@
                             <th>Discount Rate</th>
                             <th>Discount Amount</th>
                         </tr>
+                        <tr><td colspan="24"><hr></td> </tr>
                             @foreach($orderItems as $k=> $item)
                                 @php //dd($item) @endphp
-                            <tr style="border-bottom: 2px solid black; vertical-align: top">
+                                <tr style="border-bottom: 2px solid black; vertical-align: top">
                                 <td>{{$k+1}}</td>
                                 <td>{{$item->prod_type}}</td>
                                 <td>{{$item->item}}</td>
@@ -164,8 +169,13 @@
                 </td>
                 </tr>
 
+
                 <tr>
                     <td colspan="5"><br></td>
+                </tr>
+
+                <tr>
+                    <td colspan="5"><hr></td>
                 </tr>
 
                 <tr>
@@ -183,6 +193,9 @@
                                 <th>Quantity</th>
                                 <th>Price</th>
                                 <th>Sub Total</th>
+                            </tr>
+                            <tr>
+                                <td colspan="8"><hr></td>
                             </tr>
 
                         @foreach($orderRequestProducts as $k => $orp)
