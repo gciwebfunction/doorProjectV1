@@ -41,8 +41,8 @@
                  <table class="display fontsize13" id="cartTable" >
                     <thead>
                     <tr>
-                        <th>Qty</th>
-                        <th>Category</th>
+
+                        <th>Type</th>
                         <th>Name</th>
                         <th>Size</th>
                         <th>Color</th>
@@ -64,6 +64,7 @@
                         <th>Sill Color</th>
                         <th>Hinge Color</th>
                         <th>Assemble</th>
+                        <th>Qty</th>
                         <th>Price</th>
                         <th></th>
                     </tr>
@@ -75,8 +76,8 @@
 
     $wq = $item->getQuantity(); $pp = $item->getPrice(); $ppp = $pp * $wq; @endphp
                             <tr style="vertical-align: top" id="itemRow1-{{$item->getId()}}">
+
                                 <td>{{$item->getName()}}</td>
-                                <td>{{$item->getQuantity()}}</td>
                                 <td>{{$item->getCategoryName()}}</td>
                                 <td>{{$item->getSize()}}</td>
                                 <td>{{$item->getColor()}}</td>
@@ -101,6 +102,7 @@
                                 <td>{{$item->getsillColor()}}</td>
                                 <td>{{$item->gethingeColor()}}</td>
                                 <td>{{$item->getassembleOption()}}</td>
+                                <td>{{$item->getQuantity()}}</td>
                                 <td >${{sprintf('%01.2f',$ppp )}}</td>
                                 <input type="hidden" name="pricy-{{$item->getId()}}" id="pricy-{{$item->getId()}}" class="pricy" value="{{sprintf('%01.2f',$ppp )}}" >
                                 <td class="delete alert-danger col-1 m-1 p-1"

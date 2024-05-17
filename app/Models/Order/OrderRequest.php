@@ -13,6 +13,11 @@ class OrderRequest extends Model
 {
     use HasFactory;
 
+    //   protected $dates = ['expected_shipping_date'];
+    protected $casts = [
+        'expected_shipping_date' => 'date',  // 'date' is also an option if you only need the date part
+    ];
+
     public $fillable = [
         'distributor_id',
         'dealer_id',
@@ -25,8 +30,13 @@ class OrderRequest extends Model
         'status',
         'req_generator_type',
         'request_type',
-        'current_level'
+        'current_level',
+        'shipping_instruction',
+        'package_instruction'
     ];
+
+
+
 
     public function doorItems()
     {

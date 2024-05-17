@@ -25,6 +25,8 @@ use http\Env\Request;
 use Illuminate\Support\Facades\Session;
 use DB;
 
+use Carbon\Carbon;
+
 class OrderController extends Controller
 {
 
@@ -96,7 +98,11 @@ class OrderController extends Controller
             'city'                  => 'required',
             'state'                 => 'required',
             'additionalInformation' => '',
-            'expected_shipping_date'=> 'required'
+            'expected_shipping_date'=> 'required',
+            'shipping_instruction'  => '',
+            'package_instruction'   => '',
+            'po_number'             => '',
+
         ]);
 
         $orderRequest        = OrderRequest::findOrFail($data['order_request_id']);
@@ -120,18 +126,27 @@ class OrderController extends Controller
         }
 
 
-        $time               = $data['expected_shipping_date'].' 11:00:00';
-        $exp_shipping_date  = date('Y-m-d H:i:s' ,strtotime($time));
+        $time                   = $data['expected_shipping_date'];
+        $date_expp              = Carbon::createFromFormat('m-d-Y', $time);
+        $exp_shipping_date      = $date_expp->format('Y-m-d');
+
+        $shipping_instruction   = $data['shipping_instruction'];
+        $package_instruction    = $data['package_instruction'];
+        $po_number              = $data['po_number'];
+
 
         $orderRequest->update([
             'ship_to'                => $address->id,
             'expected_shipping_date' => $exp_shipping_date,
             'request_type'           => $request_type,
-            'current_level'          => $request_level
+            'current_level'          => $request_level,
+            'package_instruction'    => $package_instruction,
+            'shipping_instruction'   => $shipping_instruction,
+            'po_number'              => $po_number,
         ]);
 
 
-        $message             = $data['additionalInformation'];
+        $message                    = $data['additionalInformation'];
         if (!empty($message)) {
             OrderRequestNote::create([
                 'order_note'        => $data['additionalInformation'],
@@ -179,13 +194,13 @@ class OrderController extends Controller
                         SELECT order_requests.* 
                         FROM  order_requests 
                         INNER JOIN users ON users.id = order_requests.user_id 
-                        WHERE users.id = $user_id OR users.distributor_id = $user_id ");
+                        WHERE users.id = $user_id OR users.distributor_id = $user_id order by order_requests.id desc  ");
 
                 $allOrders     =  DB::select("
                         SELECT orders.* 
                         FROM  orders 
                         INNER JOIN users ON users.id = orders.original_order_request_user_id 
-                        WHERE users.id = $user_id OR users.distributor_id = $user_id ");
+                        WHERE users.id = $user_id OR users.distributor_id = $user_id order by order_requests.id desc   ");
                 break;
             case "dealer":
                 $orderRequests =  DB::table('order_requests')->where('user_id', $user_id)->orderBy('id', 'DESC')->get();
@@ -555,6 +570,7 @@ class OrderController extends Controller
         $orderrequestitems                  = DB::table('door_items')->where('order_request_id', $orRequestId)->orderBy('id', 'ASC')->get();
 
 
+
         $item_arr = array();
         $sub_total= 0;
         foreach ($orderrequestitems as $k   => $item) {
@@ -592,15 +608,26 @@ class OrderController extends Controller
         $shoppingCart               = $this->cartService->getUserCart($user->id);
         $cartView                   = $this->doorService->getDoorViewObjectsForCart($shoppingCart);
         $cartIgtems                 = $cartView->getDoorViewObjects();
-        //echo $orderRequest->ship_to;die;
+        $expected_shipping_date     = $orderRequest->expected_shipping_date->format('m-d-Y');
         $address_id                 = $orderRequest->ship_to;
 
-        $shipping_address           = DB::table('addresses')->where('id',$address_id)->get();
-        $shipping_add               = $shipping_address[0]->address??null;
 
-        $OrderRequestNote           = DB::table('order_request_notes')->where('order_request_id', $orRequestId)->get();
-        $orderRequestmsgs           = DB::table('order_request_messages')->where('order_request_id', $orRequestId)->get();
 
+        // for dealer shows the address he added while placing order request
+        $disti_address1            = DB::table('addresses')->where('id',$address_id)->get();
+        $disti_addr211             = $disti_address1[0]->address??null;
+        $shipping_add              = $disti_addr211;
+        $disti_addr2112            = $disti_address1[0]->address2??null;
+
+        $disti_city211             = $disti_address1[0]->city??null;
+        $disti_pcode211            = $disti_address1[0]->postal_code??null;
+        $disti_st211               = $disti_address1[0]->state??null;
+        $addd_comp                 = $disti_addr211.' '.$disti_addr2112.' '.$disti_city211.' '.$disti_pcode211.' '.$disti_st211;
+
+
+        $OrderRequestNote          = DB::table('order_request_notes')->where('order_request_id', $orRequestId)->get();
+        $orderRequestmsgs          = DB::table('order_request_messages')->where('order_request_id', $orRequestId)->get();
+//,dd($orderRequest);
 
         return view('order.EditManufacturerView', [
             'orderRequest'          => $orderRequest,
@@ -613,7 +640,8 @@ class OrderController extends Controller
             'orderRequestmsgs'      => $orderRequestmsgs,
             'sub_total'             => $sub_total,
             'orderRequestProducts'  => $orderRequestProducts,
-            'distiryAdd'            => $addd_comp
+            'distiryAdd'            => $addd_comp,
+            'expected_shipping_date' => $expected_shipping_date
         ]);
     }
 
@@ -639,6 +667,8 @@ class OrderController extends Controller
         $addd_comp                = $disti_addr.' '.$disti_addr2.' '.$disti_city.' '.$disti_pcode.' '.$disti_st;
 
         $orderRequest                       = OrderRequest::findOrFail($orRequestId);
+        $expected_shipping_date             = $orderRequest->expected_shipping_date->format('m-d-Y');
+
         $orderrequestitems                  = DB::table('door_items')->where('order_request_id', $orRequestId)->orderBy('id', 'ASC')->get();
 
         $item_arr = array();
@@ -679,10 +709,24 @@ class OrderController extends Controller
         $cartView                   = $this->doorService->getDoorViewObjectsForCart($shoppingCart);
         $cartIgtems                 = $cartView->getDoorViewObjects();
         //echo $orderRequest->ship_to;die;
+        
+
+        $expected_shipping_date     = $orderRequest->expected_shipping_date->format('m-d-Y');
         $address_id                 = $orderRequest->ship_to;
 
-        $shipping_address           = DB::table('addresses')->where('id',$address_id)->get();
-        $shipping_add               = $shipping_address[0]->address??null;
+
+
+        // for dealer shows the address he added while placing order request
+        $disti_address1            = DB::table('addresses')->where('id',$address_id)->get();
+        $disti_addr211             = $disti_address1[0]->address??null;
+        $shipping_add              = $disti_addr211;
+        $disti_addr2112            = $disti_address1[0]->address2??null;
+
+        $disti_city211             = $disti_address1[0]->city??null;
+        $disti_pcode211            = $disti_address1[0]->postal_code??null;
+        $disti_st211               = $disti_address1[0]->state??null;
+        $addd_comp                 = $disti_addr211.' '.$disti_addr2112.' '.$disti_city211.' '.$disti_pcode211.' '.$disti_st211;
+
 
         $OrderRequestNote           = DB::table('order_request_notes')->where('order_request_id', $orRequestId)->get();
         $orderRequestmsgs           = DB::table('order_request_messages')->where('order_request_id', $orRequestId)->get();
@@ -699,7 +743,8 @@ class OrderController extends Controller
             'orderRequestmsgs'      => $orderRequestmsgs,
             'sub_total'             => $sub_total,
             'orderRequestProducts'  => $orderRequestProducts,
-            'distiryAdd'            => $addd_comp
+            'distiryAdd'            => $addd_comp,
+            'expected_shipping_date' => $expected_shipping_date
         ]);
     }
     

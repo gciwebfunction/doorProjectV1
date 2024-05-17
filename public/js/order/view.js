@@ -19,7 +19,7 @@ function init() {
 
 
   $('#orderRequestTable').DataTable({
-      order: [[3, 'desc']],
+      order: [[1 , 'desc']],
       dom: 'Bfrtip',
       buttons: [
         'copy', 'csv', 'excel', 'pdf', 'print'
@@ -27,6 +27,7 @@ function init() {
   });
 
   $('#orderTable').DataTable({
+      order: [[1 , 'desc']],
     dom: 'Bfrtip',
     buttons: [
       'copy', 'csv', 'excel', 'pdf', 'print'

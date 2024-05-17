@@ -26,7 +26,7 @@
                     @foreach($orders as $order)
                         <tr>
                             <td>{{$order->id}}</td>
-                            <td>{{$order->created_at}}</td>
+                            <td>@php echo date( 'm-d-Y', strtotime($order->created_at)) @endphp</td>
                             <td class="currSign">
                                 {{sprintf('%01.2f', $order->total_order_amount)}}
 
@@ -107,7 +107,8 @@
                             {{$or->id}}
                         </td>
                         <td>
-                            {{$or->created_at}}
+
+                            @php echo date( 'm-d-Y', strtotime($or->created_at)) @endphp
                         </td>
                         <td>
                             {{$or->po_number}}

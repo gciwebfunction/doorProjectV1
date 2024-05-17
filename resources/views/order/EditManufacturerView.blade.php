@@ -4,16 +4,29 @@
             {{ __('Manufacturer Update Order Request Form')  }}
         </h2>
     </x-slot>
-    <div class="py-5 text-center">
-        <h2>  Order Request Detail</h2>
-    </div>
+    <div class=" text-center" style=" margin: 0 auto; padding-bottom: 0rem !important;padding-top: 0rem !important;"> <h3>  Order Request Detail</h3> </div>
     <style>
         .form-label{
-            font-size: 13px !important;
+            font-size: 10px !important; margin-bottom: 0px !important;
         }
         #orderRequestTable tr {
             text-align: center;
             vertical-align: top;
+        }
+
+        .form-control{
+            display: block;
+            width: 100%;
+            height: calc(2.25rem + 2px);
+            padding: .1rem .4rem;
+            font-size: 10px !important;
+            line-height: 0.5;
+            color: #495057;
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 1px solid #ced4da;
+            border-radius: .25rem;
+            transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
         }
 
     </style>
@@ -30,14 +43,14 @@
             <input type="hidden" id="orderRequestId" name="order_request_id" value="{{$orderRequest->id}}">
 {{--            <div class="container">--}}
                 <div class="row">
-                    <div class="col-md-12 mb-4" style="line-height: 25px">
+                    <div class="col-md-12 mb-4" style="line-height: 20px">
                         <div style="border: 1px solid black;border-radius: 2px;">
                             <div class="card-body">
                                 <div class="row">
-                                    <table class="table-striped" id="orderRequestTable" style="width:100%; margin: 0px 6px 13px 3px; font-size:12px">
+                                    <table class="table-striped" id="orderRequestTable" style="width:100%; margin: 0px 6px 1px 3px; font-size:11px">
                                     <tr>
                                         <th>No.</th>
-                                        <th>Category </th>
+                                        <th>Type </th>
                                         <th>Name</th>
                                         <th>Size</th>
                                         <th>Color</th>
@@ -57,9 +70,9 @@
                                         <th>Hinge Color</th>
                                         <th>Assemble</th>
                                         <th>Qty</th>
-                                        <th>Unit Price</th>
-                                        <th>Discount</th>
-                                        <th>Discount Val</th>
+                                        <th>Unit Prices</th>
+{{--                                        <th>Discount</th>--}}
+{{--                                        <th>Discount Val</th>--}}
                                         <th>Discount Amt</th>
                                         <th>Extention</th>
                                 </tr>
@@ -92,18 +105,11 @@
                                             <td>@isset($item['assemble_knock']){{$item['assemble_knock']}}@endisset</td>
 
                                             <td>{{$item['quantity']}} <input type="hidden" value="{{$item['quantity']}}" id="item_qty{{$item['item_id']}}"></td>
-                                            <td>{{$item['price']}} <input type="hidden" value="{{$item['price']}}" id="item_price{{$item['item_id']}}"></td>
-                                            {{--                                        <td>{{$item->price*$item->quantity}} </td>--}}
-                                            <td><select class="form-control" name="discount_type[]" id="amtpe{{$item['item_id']}}" >
-                                                    <option value="%" {{ ($item['discount_type']=="%")? "selected" : "" }}>&nbsp;%&nbsp;</option>
-                                                    <option value="Amt" {{ ($item['discount_type']=="Amt")? "selected" : "" }}>Amt</option>
-                                                </select></td>
-                                            <td><input type="text" readonly name="discount_amount[]"   value="{{$item['discount_amount']}}"  class="form-control discamountcal" id="discamountcal{{$item['item_id']}}" onchange="dis_type('{{$item['item_id']}}')">
-                                            </td>
-                                            <td><input type="text"  readonly name="calculated_discount[]"  value="{{$item['calculated_discount']}}"  class="form-control discountedamt" id="discountedamtind{{$item['item_id']}}" >
-                                            </td>
+                                            <td>{{sprintf('%0.02f', $item['price'])}} <input type="hidden" value="{{$item['price']}}" id="item_price{{$item['item_id']}}"></td>
+
+                                            <td><input type="text"  readonly name="calculated_discount[]"  value="{{sprintf('%0.02f',$item['calculated_discount'])}}"  class="form-control discountedamt" id="discountedamtind{{$item['item_id']}}" > </td>
                                             <td>
-                                                <input class="form-control subtotal_price" id="subtotal_price{{$item['item_id']}}"  value="{{ $item['sub_total']}}"  name="sub_total[]">
+                                                <input class="form-control subtotal_price" id="subtotal_price{{$item['item_id']}}"  value="{{sprintf('%0.02f',$item['sub_total'])}}"  name="sub_total[]">
                                             </td>
                                         </tr>
                                         @endforeach
@@ -111,9 +117,12 @@
                                 </div>
                             </div>
 
+                            <?php
+                            if(sizeof($orderRequestProducts) >=1){
+                            ?>
                             <div class="card-body">
                                 <div class="row">
-                                    <table class="table-striped" id="orderRequestTable" style="width:100%; margin: 0px 6px 13px 3px; font-size:12px">
+                                    <table class="table-striped" id="orderRequestTable" style="width:100%; margin: 0px 6px 1px 3px; font-size:11px">
                                         <tr>
                                             <th>#</th>
                                             <th>Product Name</th>
@@ -142,6 +151,9 @@
                                     </table>
                                 </div>
                             </div>
+                            <?php
+                            }
+                            ?>
 
 
                                 <div class="row">
@@ -162,21 +174,17 @@
                                                    name="transportation_mode" value="{{$orderRequest->transportation_mode}}"
                                                    autocomplete="transportation_mode">
                                         </div>
-                                        <div class="p-1 m-1 col">
-                                            <label class="form-label" for="form7Example2"><b>Order Notes</b></label>
-                                            <br>
-                                            @foreach($OrderRequestNotes as $orderRequestnote)
-                                                {{$orderRequestnote->order_note}}
+
+
+                                        <div class="form-outline">
+                                            <div class="p-1 m-1 col">
+                                                <label class="form-label" for="form7Example2"><b>Message</b></label>
                                                 <br>
-                                            @endforeach
-                                        </div>
-                                        <div class="p-1 m-1 col">
-                                            <label class="form-label" for="form7Example2">Message</label>
-                                            <br>
-                                            @foreach($orderRequestmsgs as $orm)
-                                                {{$orm->message}}
-                                                <br>
-                                            @endforeach
+                                                @foreach($orderRequestmsgs as $orm)
+                                                    <label class="form-label">{{$orm->message}}</label>
+                                                    <br>
+                                                @endforeach
+                                            </div>
                                         </div>
 
                                     </div>
@@ -206,15 +214,6 @@
                                             </div>
                                         @endif
 
-                                        <div class="p-1 m-1 col">
-                                            <label class="form-label" for="form7Example2">Shipping Instruction</label>
-                                            <input type="text"
-                                                   class="form-control{{ $errors->has('shipping_instructions') ? ' is-invalid': '' }}"
-                                                   id="shipping_instructions" readonly
-                                                   name="shipping_instructions" value="{{$orderRequest->shipping_instruction}}"
-                                                   autocomplete="shipping_instructions">
-                                        </div>
-
                                         <div class="form-outline">
                                             <div class="p-1 m-1 col">
                                                 <label class="form-label" for="form7Example2">Package Instruction</label>
@@ -225,6 +224,16 @@
                                                        autocomplete="package_instruction">
                                             </div>
                                         </div>
+                                        <div class="p-1 m-1 col">
+                                            <label class="form-label" for="form7Example2">Shipping Instruction</label>
+                                            <input type="text"
+                                                   class="form-control{{ $errors->has('shipping_instructions') ? ' is-invalid': '' }}"
+                                                   id="shipping_instructions" readonly
+                                                   name="shipping_instructions" value="{{$orderRequest->shipping_instruction}}"
+                                                   autocomplete="shipping_instructions">
+                                        </div>
+
+
 
 
 {{--                                        @if($user->usertype != 'manufacturer' )--}}
@@ -238,6 +247,20 @@
                                                            autocomplete="po_number">
                                                 </div>
                                             </div>
+
+                                            <div class="form-outline">
+
+                                                <div class="p-1 m-1 col">
+                                                    <label class="form-label" for="form7Example2"><b>Order Notes</b></label>
+                                                    <br>
+                                                    @foreach($OrderRequestNotes as $orderRequestnote)
+                                                        <label class="form-label">{{$orderRequestnote->order_note}}</label>
+                                                        <br>
+                                                    @endforeach
+                                                </div>
+
+                                            </div>
+
 {{--                                        @endif--}}
 
                                 </div>
@@ -248,7 +271,7 @@
                                             <label class="form-label"  for="form7Example1">
 {{--                                                <span>Sub Total :</span> $<span id="total_value">{{ $orderRequest->total}}</span>--}}
                                                 <span class="form-label">Sub Total &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:
-                                                    </span>$<span id="total_value">{{ $sub_total}}</span>
+                                                    </span>$<span id="total_value">{{  sprintf('%01.2f',$sub_total) }}</span>
                                             </label>
                                         </div>
 
@@ -522,5 +545,6 @@
 
 
     </script>
+
 
 </x-app-layout>

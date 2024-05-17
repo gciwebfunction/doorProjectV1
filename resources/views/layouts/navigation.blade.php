@@ -23,7 +23,7 @@
 
 
             <li><form method="get" name="category_select"  id="category_select" action="/category_dashboard/id">
-                    <select name="category_list" class="hero" id="main_drop"  onchange="this.form.submit()" required>
+                    <select style="cursor:pointer;"  name="category_list" class="hero" id="main_drop"  onchange="this.form.submit()" required>
                         <option value="">Category</option>
                         @php
                             foreach ($categoriesdeop as $category){

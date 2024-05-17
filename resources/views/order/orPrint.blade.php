@@ -41,7 +41,7 @@
                 <tr>
                     <td colspan="5"><h3>Order #: {{$orderData->id}} (Expected Shipping Date:
                 @php
-                    echo  date(('m/d/Y'), strtotime($orderData->manufacturer_shipping_date)).')';
+                    echo  date(('m-d-Y'), strtotime($orderData->manufacturer_shipping_date)).')';
                 @endphp
                 </h3></td>
                 </tr>
@@ -54,8 +54,9 @@
                 <tr><td colspan="5">
                         <table>
                             <tr>
-                                <td colspan="2"><h3>Buyer Information</h3></td>
-                                <td colspan="2"><h3>Shipping Information</h3></td>
+                                <td colspan="2"><h3>Manufacturer</h3></td>
+                                <td colspan="2"><h3>Distributor</h3></td>
+                                <td colspan="2"><h3>Dealer</h3></td>
                             </tr>
                             <tr>
                                 <td colspan="2">
@@ -67,11 +68,27 @@
                                     Phone: {{$buyer_primary_phone}}<br>
                                 </td>
                                 <td colspan="2">
-                                    Address: {{$ship_addres}}<br>
-                                    Address2: {{$ship_addres2}}<br>
-                                    State: {{$ship_state}}<br>
-                                    City: {{$ship_city}}<br>
-                                    Postal Code: {{$ship_postal_code}}<br>
+                                    Address: {{$diti_addres}}<br>
+                                    Address2: {{$diti_addres2}}<br>
+                                    State: {{$diti_state}}<br>
+                                    City: {{$diti_city}}<br>
+                                    Postal Code: {{$diti_postal_code}}<br>
+                                    Phone: {{$diti_primary_phone}}<br>
+                                </td>
+{{--                                <td colspan="2">--}}
+{{--                                    Address: {{$ship_addres}}<br>--}}
+{{--                                    Address2: {{$ship_addres2}}<br>--}}
+{{--                                    State: {{$ship_state}}<br>--}}
+{{--                                    City: {{$ship_city}}<br>--}}
+{{--                                    Postal Code: {{$ship_postal_code}}<br>--}}
+{{--                                </td>--}}
+                                <td colspan="2">
+                                    Address: {{$diti_addres}}<br>
+                                    Address2: {{$diti_addres2}}<br>
+                                    State: {{$diti_state}}<br>
+                                    City: {{$diti_city}}<br>
+                                    Postal Code: {{$diti_postal_code}}<br>
+                                    Phone: {{$diti_primary_phone}}<br>
                                 </td>
                             </tr>
                         </table>
@@ -178,6 +195,9 @@
                     <td colspan="5"><hr></td>
                 </tr>
 
+                <?php
+                    if(sizeof($orderRequestProducts) >=1){
+                ?>
                 <tr>
                     <td colspan="5"><h2>Other Products</h2></td>
                 </tr>
@@ -215,6 +235,10 @@
                         </table>
                 </td>
                 </tr>
+
+                <?php
+                    }
+                ?>
 
             </table>
         </div>
