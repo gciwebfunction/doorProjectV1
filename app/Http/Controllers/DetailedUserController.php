@@ -546,6 +546,9 @@ class DetailedUserController extends Controller
                 case 'distributor':
                     $auser->assignGroup(['distributor-grp']);
                     break;
+                case 'direct_dealer':
+                    $auser->assignGroup(['direct-dealer']);
+                    break;
                 case 'sales_manager':
                     //die('asdad');
                     $auser->assignGroup(['slsmgr-grp']);
