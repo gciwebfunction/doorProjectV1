@@ -147,7 +147,7 @@
                                 @if($user->usertype == 'manufacturer' &&  $or->current_level == 2 && $or->request_type == '2 level' )
                                     |<a style="border-radius: 2px; border: 1px solid black; background-color: lightgray; padding: 3px" href="/o/editManufacturerform/{{$or->id}}">Edit</a>|<a style="border-radius: 2px; border: 1px solid black; background-color: green; color:white; padding: 3px" href="/o/editManufacturereqconfirm/{{$or->id}}">Confirm</a>
                                 @endif
-                                @if($user->usertype == 'distributor' &&  $or->current_level == 3 && $or->request_type == '2 level' )
+                                @if(($user->usertype == 'distributor' &&  $or->current_level == 3 && $or->request_type == '2 level' )  or  ( $user->usertype == 'sales' ||  $user->usertype == 'sales_manager' ||   $user->usertype == 'sales_user') )
                                     |<a style="border-radius: 2px; border: 1px solid black; color:white;background-color: green; padding: 3px" href="/o/editManufacturereqconfirm/{{$or->id}}">Confirm</a>|<a style="border-radius: 2px; border: 1px solid black; background-color: red;color:white; padding: 3px" href="/o/rejectOrderrequest/{{$or->id}}">Reject</a>
                                 @endif
                                 @if($user->usertype == 'direct_dealer' &&  $or->current_level == 3 && $or->request_type == '2 level' )
@@ -161,6 +161,10 @@
                                 @endif
                                 {{-- end  the condition for the  sales level 2  --}}
                                 |<a style="border-radius: 2px; border: 1px solid black; background-color: lightgray; padding: 3px" target="_blank" href="/o/Editmanufacturerdetailprint/{{$or->id}}">Print</a>
+
+
+
+
 
                             @endif
 </td>

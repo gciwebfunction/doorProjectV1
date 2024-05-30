@@ -22,7 +22,7 @@ class Constants extends Model
         while (!feof($content)) {
 
             $line = fgets($content);
-
+            
             $states[] = $line;
 
         }

@@ -49,8 +49,8 @@ class OrderController extends Controller
     public function search(){
         //return view('order.search',['oRs' => $orderRequests]);
         return view('order.search');
-            //die('sfsf');
-            //dd(request());
+        //die('sfsf');
+        //dd(request());
     }
 
     // function is used when user submit an order request
@@ -178,11 +178,13 @@ class OrderController extends Controller
     public function showOrders()
     {
         $user = auth()->user();
-        //echo '<pre>';var_dump($user->usertype); echo '</pre>';die;
         $user           = auth()->user();
         $user_id        = $user->id;
         $user_tpe       = $user->usertype;
 
+        //echo '<pre>';var_dump($user->usertype); echo '</pre>';die;
+
+        // direct dealer
         switch ($user_tpe):
             case "manufacturer":
                 $orderRequests = OrderRequest::orderBy('id', 'desc')->get();
@@ -200,12 +202,17 @@ class OrderController extends Controller
                         SELECT orders.* 
                         FROM  orders 
                         INNER JOIN users ON users.id = orders.original_order_request_user_id 
-                        WHERE users.id = $user_id OR users.distributor_id = $user_id order by order_requests.id desc   ");
+                        WHERE users.id = $user_id OR users.distributor_id = $user_id order by orders.id desc   ");
                 break;
             case "dealer":
                 $orderRequests =  DB::table('order_requests')->where('user_id', $user_id)->orderBy('id', 'DESC')->get();
                 $allOrders     =  DB::table('orders')->where('original_order_request_user_id', $user_id)->orderBy('id', 'DESC')->get();
                 break;
+            case 'direct_dealer':
+                $orderRequests =  DB::table('order_requests')->where('user_id', $user_id)->orderBy('id', 'DESC')->get();
+                $allOrders     =  DB::table('orders')->where('original_order_request_user_id', $user_id)->orderBy('id', 'DESC')->get();
+                break;
+
             default:// for direct dealer
                 $orderRequests = OrderRequest::orderBy('id', 'desc')->get();
                 $allOrders     = Order::orderBy('id', 'desc')->get();
@@ -245,7 +252,7 @@ class OrderController extends Controller
         $buyer_postal_code           = $buyer_address[0]->postal_code??null;
 
 
-
+        //$orderData->
         // get the shipping details
         $ship_address               = DB::table('addresses')->where('id', $ship_to_add)->orderBy('id', 'ASC')->get();
         $ship_addres                = $ship_address[0]->address??null;
@@ -262,7 +269,9 @@ class OrderController extends Controller
         // get the order request id from the door_items table
         $order_request_id               = $doorItem[0]->order_request_id;
         $orderRequestProducts           = DB::table('cart_items')->where('order_request_id', $order_request_id)->orderBy('id', 'ASC')->get();
-
+        if (empty($orderRequestProducts)) {
+            $orderRequestProducts == null;
+        }
         //'orderRequestProducts'  => $orderRequestProducts
 
         // get the manugacturesr daeteil
@@ -272,7 +281,7 @@ class OrderController extends Controller
         $user_id                  = $user->id;
         $userContact              = DB::table('user_contacts')->where('user_id', $order_requester_id)->orderBy('id', 'ASC')->get()->toArray();
 
-        $buyer_primay_phone      = $userContact[0]->primary_phone;
+        $buyer_primay_phone      = $userContact[0]->primary_phone??0;
         //dd($userContact);
 
         return view('order.orPrint', [
@@ -314,11 +323,13 @@ class OrderController extends Controller
         return redirect()->route('oview');
     }
 
+
     public function editManufacturerform($orRequestId)
     {
 
-        $user = auth()->user();
-        $orderRequest = OrderRequest::findOrFail($orRequestId);
+        $user           = auth()->user();
+
+        $orderRequest   = OrderRequest::findOrFail($orRequestId);
 
         // for third level condition
         if (
@@ -326,7 +337,7 @@ class OrderController extends Controller
             ( $user->usertype == 'sales' &&  $orderRequest->request_type == '3 level' && $orderRequest->current_level == '3')  or
             ( $user->usertype == 'sales_user' &&  $orderRequest->request_type == '3 level' && $orderRequest->current_level == '3')  or
 
-            
+
             ( $user->usertype == 'distributor'  && $orderRequest->request_type == '3 level' && $orderRequest->current_level == '4')  or
             ( $user->usertype == 'dealer'  && $orderRequest->request_type == '3 level' && $orderRequest->current_level == '5') or
             // for two level
@@ -366,16 +377,15 @@ class OrderController extends Controller
 
 
             // get the address of shipping
-            $address_id = $orderRequest->ship_to;
-            $shipping_address = DB::table('addresses')->where('id', $address_id)->get();
-            $shipping_add = $shipping_address[0]->address;
+            $address_id             = $orderRequest->ship_to;
+            $shipping_address       = DB::table('addresses')->where('id', $address_id)->get();
+            $shipping_add           = $shipping_address[0]->address.' '.$shipping_address[0]->city.' '.$shipping_address[0]->state.' '.$shipping_address[0]->postal_code;
 
-            $OrderRequestNote = DB::table('order_request_notes')->where('order_request_id', $orRequestId)->get();
+            $OrderRequestNote       = DB::table('order_request_notes')->where('order_request_id', $orRequestId)->get();
             //dd($OrderRequestNote);
 
-            // all the order priducts
-
-            $orderRequestProducts               = DB::table('cart_items')->where('order_request_id', $orRequestId)->orderBy('id', 'ASC')->get();
+            // all the order products
+            $orderRequestProducts    = DB::table('cart_items')->where('order_request_id', $orRequestId)->orderBy('id', 'ASC')->get();
 
 
 
@@ -426,12 +436,13 @@ class OrderController extends Controller
 
         // manufacturer edit
         if (
-            ($request_type == '3 level' && $current_level == '3'  && $user->usertype == 'manufacturer')  or
-            ($request_type == '3 level' && $current_level == '4'  && $user->usertype == 'distributor') or
-            ($request_type == '3 level' && $current_level == '5'  && $user->usertype == 'dealer') or
-            ($request_type == '2 level' && $current_level == '2' && $user->usertype == 'manufacturer')
-
-            or ($request_type == '2 level' && $current_level == '2' && $user->usertype == 'sales')
+            ($request_type == '3 level' && $current_level == '3'  && $user->usertype == 'manufacturer')
+            or  ($request_type == '3 level' && $current_level == '4'  && $user->usertype == 'distributor')
+            or  ($request_type == '3 level' && $current_level == '5'  && $user->usertype == 'dealer')
+            or  ($request_type == '2 level' && $current_level == '2' && $user->usertype == 'manufacturer')
+            or  ($request_type == '2 level' && $current_level == '2' && $user->usertype == 'sales')
+            or  ($request_type == '2 level' && $current_level == '2' && $user->usertype == 'sales_user')
+            or  ($request_type == '2 level' && $current_level == '2' && $user->usertype == 'sales_manager')
         ) {
             //$po_number              = $data['po_number'];
 
@@ -546,6 +557,7 @@ class OrderController extends Controller
         }
     }
 
+
     public function Editmanufacturerdetailview($orRequestId){
 
         $user                               = auth()->user();
@@ -556,7 +568,7 @@ class OrderController extends Controller
         //$userContact->ship_to;
 
         $disti_address            = DB::table('addresses')->where('user_id',$user_id)->get();
-        
+
         //dd($disti_address);
         $disti_addr               = $disti_address[0]->address??null;
         $disti_addr2              = $disti_address[0]->address2??null;
@@ -565,7 +577,7 @@ class OrderController extends Controller
         $disti_st                 = $disti_address[0]->state??null;
         $addd_comp                = $disti_addr.' '.$disti_addr2.' '.$disti_city.' '.$disti_pcode.' '.$disti_st;
         //echo $addd_comp;die;
-        
+
         $orderRequest                       = OrderRequest::findOrFail($orRequestId);
         $orderrequestitems                  = DB::table('door_items')->where('order_request_id', $orRequestId)->orderBy('id', 'ASC')->get();
 
@@ -622,7 +634,7 @@ class OrderController extends Controller
         $disti_city211             = $disti_address1[0]->city??null;
         $disti_pcode211            = $disti_address1[0]->postal_code??null;
         $disti_st211               = $disti_address1[0]->state??null;
-        $addd_comp                 = $disti_addr211.' '.$disti_addr2112.' '.$disti_city211.' '.$disti_pcode211.' '.$disti_st211;
+        $addd_comp                 = $disti_addr211.' '.$disti_addr2112.' '.$disti_city211.' '.$disti_st211.' '.$disti_pcode211;
 
 
         $OrderRequestNote          = DB::table('order_request_notes')->where('order_request_id', $orRequestId)->get();
@@ -644,7 +656,6 @@ class OrderController extends Controller
             'expected_shipping_date' => $expected_shipping_date
         ]);
     }
-
 
 
     public function Editmanufacturerdetailprint($orRequestId){
@@ -709,7 +720,7 @@ class OrderController extends Controller
         $cartView                   = $this->doorService->getDoorViewObjectsForCart($shoppingCart);
         $cartIgtems                 = $cartView->getDoorViewObjects();
         //echo $orderRequest->ship_to;die;
-        
+
 
         $expected_shipping_date     = $orderRequest->expected_shipping_date->format('m-d-Y');
         $address_id                 = $orderRequest->ship_to;
@@ -725,7 +736,7 @@ class OrderController extends Controller
         $disti_city211             = $disti_address1[0]->city??null;
         $disti_pcode211            = $disti_address1[0]->postal_code??null;
         $disti_st211               = $disti_address1[0]->state??null;
-        $addd_comp                 = $disti_addr211.' '.$disti_addr2112.' '.$disti_city211.' '.$disti_pcode211.' '.$disti_st211;
+        $addd_comp                 = $disti_addr211.' '.$disti_addr2112.' '.$disti_city211.' '.$disti_st211.' '.$disti_pcode211;
 
 
         $OrderRequestNote           = DB::table('order_request_notes')->where('order_request_id', $orRequestId)->get();
@@ -747,9 +758,9 @@ class OrderController extends Controller
             'expected_shipping_date' => $expected_shipping_date
         ]);
     }
-    
-    
-    
+
+
+
     // methods for the 3 level
     public function editManufacturereqconfirm($orReqId){
 
@@ -892,7 +903,7 @@ class OrderController extends Controller
                     }
 
 
-                $orderItem->save();
+                    $orderItem->save();
                 endforeach;
             endforeach;
 

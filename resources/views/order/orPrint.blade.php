@@ -67,29 +67,15 @@
                                     Postal Code: {{$buyer_postal_code}}<br>
                                     Phone: {{$buyer_primary_phone}}<br>
                                 </td>
+
                                 <td colspan="2">
-                                    Address: {{$diti_addres}}<br>
-                                    Address2: {{$diti_addres2}}<br>
-                                    State: {{$diti_state}}<br>
-                                    City: {{$diti_city}}<br>
-                                    Postal Code: {{$diti_postal_code}}<br>
-                                    Phone: {{$diti_primary_phone}}<br>
+                                    Address: {{$ship_addres}}<br>
+                                    Address2: {{$ship_addres2}}<br>
+                                    State: {{$ship_state}}<br>
+                                    City: {{$ship_city}}<br>
+                                    Postal Code: {{$ship_postal_code}}<br>
                                 </td>
-{{--                                <td colspan="2">--}}
-{{--                                    Address: {{$ship_addres}}<br>--}}
-{{--                                    Address2: {{$ship_addres2}}<br>--}}
-{{--                                    State: {{$ship_state}}<br>--}}
-{{--                                    City: {{$ship_city}}<br>--}}
-{{--                                    Postal Code: {{$ship_postal_code}}<br>--}}
-{{--                                </td>--}}
-                                <td colspan="2">
-                                    Address: {{$diti_addres}}<br>
-                                    Address2: {{$diti_addres2}}<br>
-                                    State: {{$diti_state}}<br>
-                                    City: {{$diti_city}}<br>
-                                    Postal Code: {{$diti_postal_code}}<br>
-                                    Phone: {{$diti_primary_phone}}<br>
-                                </td>
+
                             </tr>
                         </table>
                     </td>
@@ -196,7 +182,7 @@
                 </tr>
 
                 <?php
-                    if(sizeof($orderRequestProducts) >=1){
+                    if(sizeof($orderRequestProducts) >=1   && $orderRequestProducts != null)   {
                 ?>
                 <tr>
                     <td colspan="5"><h2>Other Products</h2></td>

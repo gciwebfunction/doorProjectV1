@@ -33,7 +33,7 @@
                         Order Total
                     </th>
                     <th>
-                        STATUS
+                        Status
                     </th>
                 </tr>
                 </thead>

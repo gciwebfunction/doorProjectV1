@@ -30,6 +30,7 @@ class PermissionController extends Controller
 
     public function addPermissionToGroup($groupId)
     {
+        //echo $groupId;die;
         dd(request()->all());
         $data = request()->all();
         $group = Group::findOrFail($groupId);

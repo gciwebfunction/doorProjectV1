@@ -14,32 +14,39 @@
     </style>
     <div class="container"  style="min-width: 1350px;">
         @php
-            if($orderRequest->request_type == '3 level' && $orderRequest->current_level == '3'  && $user->usertype == 'manufacturer' ) {
-                $form_method = 'Editmanufacturerreq';
-            }
-            elseif($orderRequest->request_type == '3 level' && $orderRequest->current_level == '3'  && $user->usertype == 'sales' ) {
-                $form_method = 'Editmanufacturerreq';
-            }elseif($orderRequest->request_type == '3 level' && $orderRequest->current_level == '3'  && $user->usertype == 'sales_user' ) {
-                $form_method = 'Editmanufacturerreq';
-            }
 
-            elseif($orderRequest->request_type == '3 level' && $orderRequest->current_level == '4'  && $user->usertype == 'distributor' ){
-                $form_method = 'Editmanufacturerreq';
-            }elseif($orderRequest->request_type == '3 level' && $orderRequest->current_level == '5'  && $user->usertype == 'dealer' ){
-                $form_method = 'Editmanufacturerreq';
-            }elseif($orderRequest->request_type == '2 level' && $orderRequest->current_level == '2'  && $user->usertype == 'manufacturer' ){
-                $form_method = 'Editmanufacturerreq';
+                if($user->usertype != 'sales'  || $user->usertype != 'sales_manager' || $user->usertype != 'sales_user'  ) {
+                        $readonly = 'readonly'; $selected = 'selected';
+                }else{
+                        $readonly = ''; $selected = '';
+                }
+
+                if($orderRequest->request_type == '3 level' && $orderRequest->current_level == '3'  && $user->usertype == 'manufacturer' ) {
+                    $form_method = 'Editmanufacturerreq';
+                }
+                elseif($orderRequest->request_type == '3 level' && $orderRequest->current_level == '3'  && $user->usertype == 'sales' ) {
+                    $form_method = 'Editmanufacturerreq';
+                }elseif($orderRequest->request_type == '3 level' && $orderRequest->current_level == '3'  && $user->usertype == 'sales_user' ) {
+                    $form_method = 'Editmanufacturerreq';
+                }
+
+                elseif($orderRequest->request_type == '3 level' && $orderRequest->current_level == '4'  && $user->usertype == 'distributor' ){
+                    $form_method = 'Editmanufacturerreq';
+                }elseif($orderRequest->request_type == '3 level' && $orderRequest->current_level == '5'  && $user->usertype == 'dealer' ){
+                    $form_method = 'Editmanufacturerreq';
+                }elseif($orderRequest->request_type == '2 level' && $orderRequest->current_level == '2'  && $user->usertype == 'manufacturer' ){
+                    $form_method = 'Editmanufacturerreq';
 
 
-            // condition for the sales
-            }elseif($orderRequest->request_type == '2 level' && $orderRequest->current_level == '2'  && $user->usertype == 'sales' ){
-                $form_method = 'Editmanufacturerreq';
-            }elseif($orderRequest->request_type == '2 level' && $orderRequest->current_level == '2'  && $user->usertype == 'sales_user' ){
-                $form_method = 'Editmanufacturerreq';
+                // condition for the sales
+                }elseif($orderRequest->request_type == '2 level' && $orderRequest->current_level == '2'  && $user->usertype == 'sales' ){
+                    $form_method = 'Editmanufacturerreq';
+                }elseif($orderRequest->request_type == '2 level' && $orderRequest->current_level == '2'  && $user->usertype == 'sales_user' ){
+                    $form_method = 'Editmanufacturerreq';
 
-            }else{
-                $form_method = '    ';
-            }
+                }else{
+                    $form_method = '    ';
+                }
         @endphp
         <form action="/o/{{$form_method}}" method="POST" id="">
             @csrf
@@ -120,23 +127,27 @@
                                         <td>{{$item['price']}} <input type="hidden" value="{{$item['price']}}" id="item_price{{$item['item_id']}}"></td>
 {{--                                        <td>{{$item->price*$item->quantity}} </td>--}}
 
-                                        <td><select class="form-control" name="discount_type[]" id="amtpe{{$item['item_id']}}" >
+                                        <td><select {{$readonly}} class="form-control" name="discount_type[]" id="amtpe{{$item['item_id']}}" >
                                                 <option value="%" {{ ($item['discount_type']=="%")? "selected" : "" }}>%</option>
                                                 <option value="Amt" {{ ($item['discount_type']=="Amt")? "selected" : "" }}>Amt</option>
                                             </select></td>
-                                        <td><input type="text" name="discount_amount[]" value="{{$item['discount_amount']}}"   class="form-control discamountcal" id="discamountcal{{$item['item_id']}}" onchange="dis_type('{{$item['item_id']}}')">
+                                        <td><input type="text"  {{$readonly}} name="discount_amount[]" value="{{$item['discount_amount']}}"   class="form-control discamountcal" id="discamountcal{{$item['item_id']}}" onchange="dis_type('{{$item['item_id']}}')">
                                         </td>
 
-                                        <td><input type="text"  name="calculated_discount[]"  value="{{$item['calculated_discount']}}"  class="form-control discountedamt" id="discountedamtind{{$item['item_id']}}" >
+                                        <td><input type="text"   {{$readonly}}  name="calculated_discount[]"  value="{{$item['calculated_discount']}}"  class="form-control discountedamt" id="discountedamtind{{$item['item_id']}}" >
                                         </td>
                                         <td>
-                                            <input class="form-control subtotal_price" id="subtotal_price{{$item['item_id']}}"  value="{{ $ttt =  $item['quantity']*$item['price'] - $item['calculated_discount']}}"  name="sub_total[]">
+                                            <input class="form-control subtotal_price" {{$readonly}} id="subtotal_price{{$item['item_id']}}"  value="{{ $ttt =  $item['quantity']*$item['price'] - $item['calculated_discount']}}"  name="sub_total[]">
                                         </td>
                                     </tr>
                                 @endforeach
                             </table>
                                 </div>
 
+
+                                @php
+                                if(count($orderRequestProducts) > 1) {
+                                @endphp
 
                                 <div class="card-body">
                                     <div class="row">
@@ -170,8 +181,9 @@
                                         </table>
                                     </div>
                                 </div>
-
-
+                                @php
+                                    }
+                                @endphp
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="p-1 m-1 col">
@@ -217,9 +229,9 @@
                                         @if($user->usertype != 'manufacturer' )
                                         <div class="p-1 m-1 col">
                                             <label class="form-label" for="form7Example1">Address</label>
-                                            <select name="add_sel" class="form-control" required id="drop_sho">
+                                            <select {{$readonly}} name="add_sel" class="form-control" required id="drop_sho">
                                                 <option value="">Select</option>
-                                                <option value="Own">Own</option>
+                                                <option value="Own"   {{$selected}} >Own</option>
                                                 <option  value="Drop Shipping">Drop Shipping</option>
                                             </select>
                                         </div>
