@@ -118,8 +118,9 @@
 
             @if(isset($door->category))
                 @php //echo $door->category->category_name;die;
+                //older ones //$door_ids        = [1001,1002,1003,1004,1005,1006, 1007,1008, 1017, 1018, 1009,1010,1011,1012,1013,1014,1015,1016, 1029,1031,1030];
                 $door_ids        = [1001,1002,1003,1004,1005,1006, 1007,1008, 1017, 1018,
-                                    1009,1010,1011,1012,1013,1014,1015,1016, 1029,1031,1030];
+                                    1010,1011,1013,1014,1015,1016, 1029,1031,1030];
                 if (in_array($door_id, $door_ids)){
 
                    if (count($doorHandlings1) > 0){
@@ -193,13 +194,14 @@
                         if($(this).val() == 'blindselected'){
                             $("#glassGridSelect").val('');
                             $("#glass_grid_pr").val(0);
+
                             $("#liteOptionSelect").val('');
                             $("#lite_option_pr").val(0);
 
 
                             $('#blind_ht').show();
                             $('#lite_gird_combo').hide();
-                            $('#glass_ht,#glass_grid_ht,#lite_ht').hide();
+                            $('#glass_ht,#glass_grid_ht,#lite_ht,#glass_opt').hide();
 
 
 
@@ -209,21 +211,29 @@
                         if($(this).val() == 'glassselected'){
 
 
-                            $("#blindGlassliteOptionSelect").val("");
-                            $('#blindGlassliteOptionSelect').prop('selectedIndex',0);
+                            //$("#blindGlassliteOptionSelect").val("");
+                            //$('#blindGlassliteOptionSelect').prop('selectedIndex',0);
+
                             $('#glassOptionSelect').prop('selectedIndex',0);
                             $("#glassOptionSelect").val("");
 
                             //$('#glassOptionSelect,#blindGlassliteOptionSelect,#glassGridSelect').val("");
 
-                            $("#liteOptionSelect").val('');
-                            $("#lite_option_pr").val(0);
+                            //$("#liteOptionSelect").val('');
+                            //$("#lite_option_pr").val(0);
 
 
-                            $('#liteOptionSelectPlaceholder').hide();
+                            //$('#liteOptionSelectPlaceholder').hide();
+                            $('#liteOptionSelectPlaceholder').show();
                             $('#glassGridSelectPlaceholder').show();
 
-                            $('#glass_ht,#lite_ht').show();
+                            $('#glassOptionSelectPlaceholder').show();
+
+
+
+                            // glass_grid_ht
+                            $('#glass_grid_ht').show();
+                            $('#glass_ht,#lite_ht,#glass_opt').show();
                             $('#blind_ht').hide();
                             $('#lite_gird_combo').show();
                         }
@@ -235,7 +245,7 @@
 
                 {{-- GLASS OPTION--}}
                 <input type="hidden" id="old_glass_option_price" value="" name="old_glass_option_price">
-                <div class="row flex m-3" id="glass_ht" >
+                <div class="row flex m-3" id="glass_opt" >
                     <div class="col-3" style="text-align: left">
                         Glass Option
                     </div>
@@ -269,30 +279,86 @@
                 <input type="hidden" value="" name="vale_till_finish_color" id="vale_till_finish_color">
 
                 {{-- BLIND_OPTION --}}
-                <div class="row flex m-3"  id="lite_gird_combo">
-                    <div class="col-3" style="text-align: left">
-                         Glass Grid / Lite Panel Option
-                    </div>
-                    {{--                hardwareColorOptionSelect--}}
-                    {{--                        <option value="Blind">Blind</option>--}}
-                    <div class="col-4" id="">
-                        <select name="blind_glass_lite" id="blindGlassliteOptionSelect" size="1"
-                                style="width: 400px"  disabled="disabled"  >
-                            <option value="">Please select an option...</option>
-                            <option value="Glass Grid">Glass Grid</option>
-                            <option value="Lite Option">Lite Panel Option</option>
-                        </select>
-                        <div id="blindGlassliteOptionSelectError" class="ErrorRed" style="display: none;">Glass Grid/Lite Panel is required</div>
-                        {{-- <input type="hidden" id="oldmullkitOptionSelect" value="{{old('mull_kit_select')}}"> --}}
-                    </div>
+
+
+
+{{--            <div class="row flex m-3" id="glass_op" style="display: none;">--}}
+{{--                <div class="col-3" style="text-align: left">--}}
+{{--                    Glass Option--}}
+{{--                </div>--}}
+{{--                <div class="col-4" id="glassOptionSelectPlaceholder">--}}
+{{--                    <select name="glass_grid_select" id="glassGridSelect" size="1"--}}
+{{--                            style="width: 400px" disabled>--}}
+{{--                        <option value="-1">Please select a glass option...</option>--}}
+{{--                    </select>--}}
+{{--                    <input type="hidden"   id="oldGlassGrid" value="{{old('glass_grid_select')}}">--}}
+{{--                    <input type="hidden" class="hiddeee"  id="glass_grid_pr" value="{{old('glass_grid_select')}}">--}}
+{{--                    <div id="glassGridSelectError" class="ErrorRed" style="display: none;">Glass Options is required</div>--}}
+{{--                </div>--}}
+{{--            </div>--}}
+
+
+{{--            <div class="row flex m-3" id="glass_grid_ht" style="display: block;">--}}
+{{--                <div class="col-3" style="text-align: left"> Glass Grid </div>--}}
+{{--                <div class="col-4" id="glassGridSelectPlaceholder">--}}
+{{--                    <select name="glass_grid_select" id="glassGridSelect" size="1"--}}
+{{--                            style="width: 400px" disabled>--}}
+{{--                        <option value="-1">Please select a glass grid...</option>--}}
+{{--                    </select>--}}
+{{--                    <input type="hidden"   id="oldGlassGrid" value="{{old('glass_grid_select')}}">--}}
+{{--                    <input type="hidden" class="hiddeee"  id="glass_grid_pr" value="{{old('glass_grid_select')}}">--}}
+{{--                    <div id="glassGridSelectError" class="ErrorRed" style="display: none;">Glass Grid Options is required</div>--}}
+{{--                </div>--}}
+{{--            </div>--}}
+
+            <div class="row flex m-3" id="glass_grid_ht" style="display: none;">
+                <div class="col-3" style="text-align: left">Glass Grid</div>
+                <div class="col-4" id="glassGridSelectPlaceholder">
+                    <select name="glass_grid_select" id="glassGridSelect" size="1"
+                            style="width: 400px" disabled>
+                        <option value="-1">Please select a glass grid...</option>
+                    </select>
+            <input type="hidden"   id="oldGlassGrid" value="{{old('glass_grid_select')}}">
+            <input type="hidden" class="hiddeee"  id="glass_grid_pr" value="{{old('glass_grid_select')}}">
+            <div id="glassGridSelectError" class="ErrorRed" style="display: none;">Glass Grid Options is required</div>
                 </div>
+            </div>
+
+
+            <div class="row flex m-3" id="lite_ht" style="display: none;">
+                <div class="col-3" style="text-align: left">3/4 Lite Panel Option</div>
+                <div class="col-4" id="liteOptionSelectPlaceholder">
+                    <select name="lite_option_select" id="liteOptionSelect" size="1"
+                            style="width: 400px" disabled>
+                        <option value="-1">Please select a Lite Panel option...</option>
+                    </select>
+                    <input type="hidden" id="oldLiteOptionSelect" value="{{old('lite_option_select')}}">
+                    <input type="hidden" class="hiddeee"  id="lite_option_pr" value="">
+{{--                    <div id="liteOptionSelectError" class="ErrorRed" style="display: none;">Lite Options is required</div>--}}
+                </div>
+            </div>
+
+
+{{--                <div class="row flex m-3"  id="lite_gird_combo">--}}
+{{--                    <div class="col-3" style="text-align: left">--}}
+{{--                         Glass Grid / Lite Panel Option--}}
+{{--                    </div>--}}
+{{--                    --}}
+{{--                    <div class="col-4" id="">--}}
+{{--                        <select name="blind_glass_lite" id="blindGlassliteOptionSelect" size="1"--}}
+{{--                                style="width: 400px"  disabled="disabled"  >--}}
+{{--                            <option value="">Please select an option...</option>--}}
+{{--                            <option value="Glass Grid">Glass Grid</option>--}}
+{{--                            <option value="Lite Option">Lite Panel Option</option>--}}
+{{--                        </select>--}}
+{{--                        <div id="blindGlassliteOptionSelectError" class="ErrorRed" style="display: none;">Glass Grid/Lite Panel is required</div>--}}
+{{--                    </div>--}}
+{{--                </div> --}}
+
 
                 <script type="text/javascript">
-                    $('#blindGlassliteOptionSelect').change(function(){
-                        /*if($(this).val() == 'Blind'){
-                            $('#blind_ht').show();
-                            $('#glass_grid_ht,#lite_ht').hide();
-                        }*/
+
+                   /* $('#blindGlassliteOptionSelect').change(function(){
                         if($(this).val() == 'Glass Grid'){
                             $('#glass_grid_ht').show();
                             $('#lite_ht').hide();
@@ -316,39 +382,12 @@
                             $("#blindOptionSelect").val('');
                             $("#blind_option_pr").val(0);
                         }
-                    });
+                    });*/
                 </script>
 
 
-                <input type="hidden" name="glass_grid_lite_option" id="glass_grid_lite_option" >
+{{--                <input type="hidden" name="glass_grid_lite_option" id="glass_grid_lite_option" >--}}
 
-                <div class="row flex m-3" id="glass_grid_ht" style="display: none;">
-                    <div class="col-3" style="text-align: left">
-                        Glass Grid
-                    </div>
-                    <div class="col-4" id="glassGridSelectPlaceholder">
-                        <select name="glass_grid_select" id="glassGridSelect" size="1"
-                                style="width: 400px" disabled>
-                            <option value="-1">Please select a glass option...</option>
-                        </select>
-                        <input type="hidden"   id="oldGlassGrid" value="{{old('glass_grid_select')}}">
-                        <input type="hidden" class="hiddeee"  id="glass_grid_pr" value="{{old('glass_grid_select')}}">
-                        <div id="glassGridSelectError" class="ErrorRed" style="display: none;">Glass Grid Options is required</div>
-                    </div>
-                </div>
-
-                <div class="row flex m-3" id="lite_ht" style="display: none;">
-                    <div class="col-3" style="text-align: left">3/4 Lite Panel Option</div>
-                    <div class="col-4" id="liteOptionSelectPlaceholder">
-                        <select name="lite_option_select" id="liteOptionSelect" size="1"
-                                style="width: 400px" disabled>
-                            <option value="-1">Please select a Lite Panel option...</option>
-                        </select>
-                        <input type="hidden" id="oldLiteOptionSelect" value="{{old('lite_option_select')}}">
-                        <input type="hidden" class="hiddeee"  id="lite_option_pr" value="">
-                        <div id="liteOptionSelectError" class="ErrorRed" style="display: none;">Lite Options is required</div>
-                    </div>
-                </div>
 
                 {{--            HANDLE TYPE            --}}
                 <div class="row flex m-3">
@@ -586,7 +625,10 @@
                             style="width: 400px"  required disabled="disabled">
 {{--                        <option value="">Select an Option</option>--}}
                         <option value="Full Assembled">Full Assembled</option>
+                        @php   if($door->id != 1023 || $door->id != 1024 ||  $door->id != 1022 ||  $door->id != 1098 ||  $door->id != 1099  ||  $door->id != 1100 ||    $door->id != 1112 ) { @endphp
                         <option value="Knocked Down">Knocked Down</option>
+                        @php } @endphp
+
                     </select>
 {{--                    <input type="hidden" id="oldHingecolorOption" value="{{old('hinge_color_option_select')}}">--}}
                 </div>

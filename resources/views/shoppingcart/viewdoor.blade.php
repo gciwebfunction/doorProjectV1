@@ -50,6 +50,7 @@
                         <th>DP</th>
                         <th>Blind</th>
                         <th>Glass</th>
+                        <th>Glass Grid</th>
                         <th>3/4 Lite</th>
                         <th>Handle</th>
                         <th>Lock</th>
@@ -72,7 +73,7 @@
                     <tbody>
                     @if($shoppingCart ?? ''  && $cartItemCount > 0)
                         @php foreach($doorViewItems as $item){
-                            //echo '<pre>';var_dump($item);echo '</pre>';
+                           // echo '<pre>';var_dump($item);echo '</pre>';
 
     $wq = $item->getQuantity(); $pp = $item->getPrice(); $ppp = $pp * $wq; @endphp
                             <tr style="vertical-align: top" id="itemRow1-{{$item->getId()}}">
@@ -84,7 +85,11 @@
                                 <td>{{$item->getHandling()}}</td>
                                 <td>{{$item->getDpOption()}}</td>
                                 <td>{{$item->getblindOption()}}</td>
-                                <td>{{$item->getGrid()}}</td>
+                                <td>{{$item->getGlassGrid()}}</td>
+                                <td>{{$item->getGlassoption()}}</td>
+
+
+
                                 <td>{{$item->getliteOption()}}</td>
 
                                 <td>{{$item->getHandle()}}</td>
