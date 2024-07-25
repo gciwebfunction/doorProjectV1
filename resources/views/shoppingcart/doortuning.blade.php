@@ -625,7 +625,8 @@
                             style="width: 400px"  required disabled="disabled">
 {{--                        <option value="">Select an Option</option>--}}
                         <option value="Full Assembled">Full Assembled</option>
-                        @php   if($door->id != 1023 || $door->id != 1024 ||  $door->id != 1022 ||  $door->id != 1098 ||  $door->id != 1099  ||  $door->id != 1100 ||    $door->id != 1112 ) { @endphp
+                        @php
+                            if($door->id != 1023 || $door->id != 1024 ||  $door->id != 1022 ||  $door->id != 1098 ||  $door->id != 1099  ||  $door->id != 1100 ||    $door->id != 1112 ) { @endphp
                         <option value="Knocked Down">Knocked Down</option>
                         @php } @endphp
 

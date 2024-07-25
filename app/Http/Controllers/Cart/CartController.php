@@ -433,6 +433,9 @@ class CartController extends Controller
         $orderTotal     = $cartView->getOrderTotal();
         $orderSubtotal  = $cartView->getOrderSubtotal();
 
+
+        //dd($shoppingCart);
+
         foreach ($shoppingCart->cartItems as $item) {
             //$orderSubtotal += $item->product_unit_price;
             $orderSubtotal += ($item->product_unit_price)*($item->quantity);

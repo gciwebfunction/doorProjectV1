@@ -43,7 +43,7 @@
 
 
     window.onload = function () {
-         validationError = 0 ;
+        validationError = 0 ;
         init();
         var doorNameTypeId              = $('#doorNameTypeIdSelection').val();
         var sizeId                      = $('#oldSize').val();
@@ -60,7 +60,7 @@
 
 
 
-    
+
         var glassOptionId               = $('#oldGlassOption').val();
         var depthId                     = $('#oldGlassDepth').val();
         var handleTypeId                = $('#oldHandleType').val();
@@ -211,7 +211,13 @@
             var strss       = doorSize[0];
             var www         = strss.split("'")[0];
 
-            if(www>=10){
+            var str         = doorSize[1];
+            var height      =  (parseInt(str.substring(0,1)));
+
+            //alert('');
+            //if(www>=10){
+            //if(height>=8 && www>=10){
+            if(www>=8 ){
                 //alert
                 //alert('GReater-equal');
                 var select = $('#assemble_knocked_option_select');
@@ -222,12 +228,25 @@
                 select.empty().append('<option value="Full Assembled">Full Assembled</option><option value="Knocked Down">Knocked Down</option>');
             }
 
-            var str         = doorSize[1];
-            var height      =  (parseInt(str.substring(0,1)));
-            $('#doorSizeSelectError').hide();
-            if(height >= 8){
-                $("#assemble_knocked_option_select option:contains('Assemble Option')").attr("disabled","disabled");
+            // new condition for the knock down
+            /*
+            var door_idd = document.getElementById('productId').value;
+            if(door_idd == 1023 || door_idd == 1024 ||  door_idd == 1022 ||  door_idd == 1098 ||  door_idd == 1099  ||  door_idd == 1100 ||    door_idd == 1112  ){
+                var select = $('#assemble_knocked_option_select');
+                select.empty().append('<option value="Full Assembled">Full Assembled</option>');
+            }*/
+
+            var door_idd = document.getElementById('productId').value;
+            if(door_idd == 1030 || door_idd == 1031 ){
+                var select = $('#assemble_knocked_option_select');
+                select.empty().append('<option value="Knocked Down">Knocked Down</option>');
             }
+
+
+            $('#doorSizeSelectError').hide();
+            /*if(height >= 8){
+                $("#assemble_knocked_option_select option:contains('Assemble Option')").attr("disabled","disabled");
+            }*/
         });
 
         $('.doorNameClass').each(function () {
@@ -382,8 +401,10 @@
 
                 if (liteOptionIDArray.length > 1) {
                     var litePrice = liteOptionIDArray[3].trim();
-                    $("#oldGlassGrid").val();
-                    $('#glass_grid_pr').val(0);
+
+                    // $("#oldGlassGrid").val();
+                    // $('#glass_grid_pr').val(0);
+
                     $("#lite_option_pr").val(litePrice);
                     $("#liteOptionSelectError").hide();
 
@@ -458,7 +479,8 @@
                 if (glassGridIDArray.length > 1) {
                     var glsaPrice = +glassGridIDArray[3].trim();
                     // set blind and lite to 0
-                    $("#lite_option_pr,#blind_option_pr").val(0);
+                    //$("#lite_option_pr,#blind_option_pr").val(0);
+                    $("#blind_option_pr").val(0);
 
 
                     $("#glassGridSelectError").hide();
@@ -783,7 +805,7 @@
             liteOptionSelectLength    = $( "#liteOptionSelect" ).length;
             liteOptionSelectLengV     = $( "#liteOptionSelect" ).val();
 
-            if ( $( "#lite_ht" ).css('display') != 'none' && liteOptionSelectLength > 1){
+            /*if ( $( "#lite_ht" ).css('display') != 'none' && liteOptionSelectLength > 1){
                 // 'element' is hidden
                 //alert('huhh');
                 if( !liteOptionSelectLengV  || liteOptionSelectLengV == '') {
@@ -792,7 +814,7 @@
                     event.preventDefault();
                     e.preventDefault();
                 }
-            }
+            }*/
 
 
 
@@ -816,7 +838,7 @@
             //if ( glassGridSelectLength >   1 )   {
 
             if ( $( "#glass_grid_ht" ).css('display') != 'none' ){
-                    // 'element' is hidden
+                // 'element' is hidden
 
                 //alert('huhh');
                 if( !glassGridSelectLengV  || glassGridSelectLengV == '') {
@@ -857,16 +879,16 @@
 
 
 
-             doorHandlingSelectLength    = $( "#doorHandlingSelect" ).length;
-             doorHandlingSelectLengV     = $( "#doorHandlingSelect" ).val();
-             if ( doorHandlingSelectLength )   {
-                 if( !doorHandlingSelectLengV  || doorHandlingSelectLengV == '') {
-                     $('#doorHandlingSelectError').show();
-                     return false;
-                     event.preventDefault();
-                     e.preventDefault();
-                 }
-             }
+            doorHandlingSelectLength    = $( "#doorHandlingSelect" ).length;
+            doorHandlingSelectLengV     = $( "#doorHandlingSelect" ).val();
+            if ( doorHandlingSelectLength )   {
+                if( !doorHandlingSelectLengV  || doorHandlingSelectLengV == '') {
+                    $('#doorHandlingSelectError').show();
+                    return false;
+                    event.preventDefault();
+                    e.preventDefault();
+                }
+            }
 
             // Frame thicknessSelect validation
             frameThicknessOptionSelectLength    = $( "#frameThicknessOptionSelect" ).length;
@@ -1615,7 +1637,9 @@
 
         if (liteOptionForSpecificSizeCount  == 0) {
             $('#liteOptionSelect').remove();
-            $('#liteOptionSelectPlaceholder').append("<p class='bold noOptionForSize'>No Lite Options available.</p>");
+            //$('#liteOptionSelectPlaceholder').append("<p class='bold noOptionForSize'>No Lite Options available.</p>");
+            $('#liteOptionSelectPlaceholder').append("<p class='bold noOptionForSize'>Not Available.</p>");
+
             $('#liteOptionSelectPlaceholder').parent().hide();
         }
 
