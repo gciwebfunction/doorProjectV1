@@ -16,6 +16,8 @@ if (userTypeSelect) {
     $('.notADistributor').addClass('d-none');
     $('.notAManufacturere').addClass('d-none');
 
+//    $('#shipping_address_div').show();
+       $('#new_dealer_fields').hide();
 
 
 
@@ -23,6 +25,8 @@ if (userTypeSelect) {
       $('.distributorUser').removeClass('d-none');
       $('.standardUser').removeClass('d-none');
       $('.title_user_type').html("Distributor");
+      $('#new_dealer_fields').show();
+
     } else if (this.value == 'sales' || this.value == 'sales_manager') {
       $('.standardUser').removeClass('d-none');
       //$('.notADistributor').removeClass('d-none');
@@ -32,15 +36,20 @@ if (userTypeSelect) {
       }
       else{
         $('.title_user_type').html("Sales Manager");
+        // don't show the shipping address for sales mananger
+      //  $('#shipping_address_div').hide();
       }
     } else if (this.value == 'dealer') {
       $('.standardUser').removeClass('d-none');
       $('.notADistributor').removeClass('d-none');
       $('.title_user_type').html("Dealer");
+      $('#new_dealer_fields').show();
     }else if (this.value == 'direct_dealer') {
       $('.distributorUser').removeClass('d-none');
       $('.standardUser').removeClass('d-none');
       $('.title_user_type').html("Direct Dealer");
+      $('#new_dealer_fields').show();
+
     }
     // condition for the manufatuerr user
     else if (this.value == 'manufacturer') {
@@ -62,6 +71,10 @@ window.onload = function () {
   $('option.userTypeEmptySelector').prop('selected', true);
   // var should_be_selected = '.userTypeEmptySelector';
   // $('#selectUserType').find(should_be_selected).prop('selected', true)
+
+  // for sales manager hide only
+  $('#shipping_address_div').show();
+
   if ($('#selectedUserTypeHidden').val() == "distributor") {
     $('.distributorUser').removeClass('d-none');
     $('.standardUser').removeClass('d-none');
@@ -69,18 +82,26 @@ window.onload = function () {
     $('#distributorSelector').attr('selected', 'selected');
     $('.notADistributor').addClass('d-none');
     $('.title_user_type').html("Distributor");
+
+
+
   } else if ($('#selectedUserTypeHidden').val() == "sales") {
     $('.standardUser').removeClass('d-none');
     $('.notADistributor').removeClass('d-none');
     $('.userTypeEmptySelector').removeAttr('selected');
     $('#salesSelector').attr('selected', 'selected');
     $('.title_user_type').html("Sales User");
+
+
   } else if ($('#selectedUserTypeHidden').val() == "sales_manager") {
     $('.standardUser').removeClass('d-none');
     $('.notADistributor').removeClass('d-none');
     $('.userTypeEmptySelector').removeAttr('selected');
     $('#salesManagerSelector').attr('selected', 'selected');
     $('.title_user_type').html("Sales Manager");
+
+
+
   } else if ($('#selectedUserTypeHidden').val() == "dealer") {
     $('.standardUser').removeClass('d-none');
     $('.notADistributor').removeClass('d-none');

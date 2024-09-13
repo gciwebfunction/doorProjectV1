@@ -223,11 +223,144 @@
                                value="{{old('contactPersonPhone2')}}">
                     </div>
                 </div>
+
+                    <div id="new_dealer_fields" style="display: none;">
+                {{-- new fields for the dealer starts --}}
+                <div class="row p-1 m-1 ">
+                    <div class="col">
+                        <label for="credit_limit" class="form-label">Credit Limit</label>
+                    </div>
+                    <div class="col">
+                        <input type="text"
+                               class="form-control{{$errors->has('credit_limit')?' is-invalid': '' }}"
+                               id="credit_limit"
+                               name="credit_limit"
+                               value="{{old('credit_limit')}}">
+                    </div>
+                </div>
+                <div class="row p-1 m-1 ">
+                    <div class="col">
+                        <label for="payment_term" class="form-label">Payment Term</label>
+                    </div>
+                    <div class="col">
+                        <input type="text"
+                               class="form-control{{$errors->has('payment_term')?' is-invalid': '' }}"
+                               id="payment_term"
+                               name="payment_term"
+                               value="{{old('payment_term')}}">
+                    </div>
+                </div>
+
+                <div class="row p-1 m-1 ">
+                    <div class="col">
+                        <label for="primary_fax" class="form-label">Fax 1</label>
+                    </div>
+                    <div class="col">
+                        <input type="text"
+                               class="form-control{{$errors->has('primary_fax')?' is-invalid': '' }}"
+                               id="primary_fax"
+                               name="primary_fax"
+                               value="{{old('primary_fax')}}">
+                    </div>
+                </div>
+
+                <div class="row p-1 m-1 ">
+                    <div class="col">
+                        <label for="secondary_fax" class="form-label">Fax 2</label>
+                    </div>
+                    <div class="col">
+                        <input type="text"
+                               class="form-control{{$errors->has('secondary_fax')?' is-invalid': '' }}"
+                               id="secondary_fax"
+                               name="secondary_fax"
+                               value="{{old('secondary_fax')}}">
+                    </div>
+                </div>
+                </div>
+                {{-- new fields for the dealer ends --}}
+
+
+
+
             </div>
 
+
             <div class="container py-4 d-none standardUser"
-                 style="max-width:700px; border: 1px solid lightgray">
-                <h5>Shipping Address</h5>
+                 style="max-width:700px; border: 1px solid lightgray" id="physical_address_div" >
+                <h5>Physical Address</h5>
+                <hr/>
+                <div class="row">
+                    <div class="col">
+                        <label class="form-label" for="address">Address<span style="color: red">&nbsp;*&nbsp;</span></label>
+                    </div>
+                    <div class="col">
+                        <input type="text" id="physical_address" required
+                               class="form-control{{$errors->has('physical_address')?' is-invalid':''}}"
+                               name="physical_address"
+                               value="{{old('physical_address')}}" placeholder="">
+                        {{--                                name="address" value="{{old('address')}}" placeholder="123 Main St.">--}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label class="form-label" for="physical_address2">Address line 2</label>
+                    </div>
+                    <div class="col">
+                        <input type="text" id="physical_address2"
+                               class="form-control{{$errors->has('physical_address2')?' is-invalid':''}}"
+                               name="physical_address2"
+                               value="{{old('physical_address2')}}"
+                               placeholder="">
+                        {{--                        Apt / Suite #--}}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <label class="form-label" for="inputCity">City</label>
+                    </div>
+                    <div class="col">
+                        <input type="text" id="physical_city"
+                               class="form-control{{$errors->has('physical_city')?' is-invalid':''}}"
+                               name="physical_city" value="{{old('physical_city')}}" >
+                        {{--                        placeholder="Cityville"--}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label class="form-label" for="state">State</label>
+                    </div>
+                    <div class="col">
+                        <select id="physical_state" name="physical_state"
+                                class="form-control{{$errors->has('physical_state')?' is-invalid':''}}">
+                            @foreach($usStates as $state)
+                                <option value="{{ $state }}">{{ $state }}</option>
+                            @endforeach
+                            <option value="Taxes">Taxes</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <label class="form-label" for="physical_zip">Zip Code<span style="color: red">&nbsp;*&nbsp;</span></label>
+                    </div>
+                    <div class="col">
+                        <input type="text" id="physical_zip" required
+                               class="form-control{{$errors->has('physical_zip')?' is-invalid':''}}"
+                               name="physical_zip" value="{{old('physical_zip')}}" >
+                        {{--                        placeholder="12345-1234"--}}
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="container py-4 d-none standardUser"
+                 style="max-width:700px; border: 1px solid lightgray" id="shipping_address_div" >
+                <h5>Shipping Address
+                    <label class="form-label" for="physical_zip" style="font-size: 12px">Same As Physical</label>
+                    <input type="checkbox"   name="same_phy" id="same_phy"  />
+                </h5>
                 <hr/>
                 <div class="row">
                     <div class="col">
@@ -242,13 +375,25 @@
                 </div>
                 <div class="row">
                     <div class="col">
-                        <label class="form-label" for="address2">Address 2</label>
+                        <label class="form-label" for="address2">Address line 2</label>
                     </div>
                     <div class="col">
                         <input type="text" id="address2"
                                class="form-control{{$errors->has('address2')?' is-invalid':''}}"
                                name="address2" value="{{old('address2')}}" placeholder="">
 {{--                        Apt / Suite #--}}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <label class="form-label" for="inputCity">City</label>
+                    </div>
+                    <div class="col">
+                        <input type="text" id="inputCity"
+                               class="form-control{{$errors->has('inputCity')?' is-invalid':''}}"
+                               name="inputCity" value="{{old('inputCi ty')}}" >
+{{--                        placeholder="Cityville"--}}
                     </div>
                 </div>
                 <div class="row">
@@ -263,17 +408,6 @@
                             @endforeach
                             <option value="Taxes">Taxes</option>
                         </select>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <label class="form-label" for="inputCity">City</label>
-                    </div>
-                    <div class="col">
-                        <input type="text" id="inputCity"
-                               class="form-control{{$errors->has('inputCity')?' is-invalid':''}}"
-                               name="inputCity" value="{{old('inputCi ty')}}" >
-{{--                        placeholder="Cityville"--}}
                     </div>
                 </div>
                 <div class="row">
@@ -302,5 +436,32 @@
     @section('scripts')
                 <script type="text/javascript" src="{{ asset('js/user/utility.js') }}" ></script>
 {{--        <script type="text/javascript" src="{{ asset('js/user/utility.js') }}" defer></script>--}}
+        <script>
+            // $('#same_phy').click(function(){
+            //     alert('adadad');
+            // });
+
+            $(document).ready(function(){
+                $("#same_phy").on("click", function(){
+                    if (this.checked) {
+                        $("#address").val($("#physical_address").val());
+                        $("#address2").val($("#physical_address2").val());
+                        $("#state").val($("#physical_state").val());
+                        $("#inputCity").val($("#physical_city").val());
+                        $("#inputZip").val($("#physical_zip").val());
+                    }
+                    else {
+                        $("#address").val('');
+                        $("#address2").val('');
+                        $("#state").val('');
+                        $("#inputCity").val('');
+                        $("#inputZip").val('');
+                    }
+                });
+            });
+
+
+
+        </script>
     @stop
 </x-app-layout>
