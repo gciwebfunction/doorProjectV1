@@ -13,7 +13,7 @@ class UserContact extends Model
     public $fillable = [
         'user_id',
 
-        //'distributor_name',
+        'distributor_name',
 
         'primary_contact',
         'secondary_contact',

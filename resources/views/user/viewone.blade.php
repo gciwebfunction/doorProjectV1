@@ -120,6 +120,9 @@
                             <label for="selectedDistributor" class="form-label">Select Distributor</label>
                         </div>
                         <div class="col">
+
+
+
                             <select name="selectedDistributor"
                                     class="form-select form-control">
                                 @foreach($distributors as $distributor)
@@ -138,6 +141,9 @@
                     </div>
                 @endif
 
+                @php
+                    if($usermodel->usertype=='distributor'     ){
+                @endphp
                     <div class="row distributorUser m-1 p-1">
                         <div class="col-4 mt-1">
                             Distributor Name
@@ -148,7 +154,15 @@
                                    value="{{$contactinfo->distributor_name??old('distributorName')}}">
                         </div>
                     </div>
-                    <div class="row   distributorUser m-1 p-1">
+                @php
+                    }
+                @endphp
+
+
+                @php
+                    if($usermodel->usertype=='distributor'  ||  $usermodel->usertype=='dealer'  || $usermodel->usertype=='manufacturer'  || $usermodel->usertype=='direct_dealer'   ){
+                @endphp
+                <div class="row   distributorUser m-1 p-1">
                         <div class="col-4 mt-1">
                             <label for="contactPerson" class="form-label">Contact Person</label>
                         </div>
@@ -160,6 +174,10 @@
                                    value="{{$contactinfo->primary_contact??old('contactPerson')}}">
                         </div>
                     </div>
+                @php
+                }
+                @endphp
+
                     <div class="row   distributorUser p-1 m-1">
                         <div class="col-4 mt-1">
                             <label for="contactPersonPhone" class="form-label">Contact Phone</label>
@@ -173,6 +191,9 @@
 
                         </div>
                     </div>
+                @php
+                    if($usermodel->usertype=='distributor'  ||  $usermodel->usertype=='dealer'  || $usermodel->usertype=='manufacturer'  || $usermodel->usertype=='direct_dealer'   ){
+                @endphp
                     <div class="row   distributorUser p-1 m-1">
                         <div class="col-4 mt-1">
                             <label for="contactPerson2" class="form-label">Alt. Contact Person</label>
@@ -197,12 +218,16 @@
                                    value="{{$contactinfo->secondary_phone??old('contactPersonPhone2')}}">
                         </div>
                     </div>
+                @php
+                }
+                @endphp
+
                 <div class="row   distributorUser p-1 m-1">
                     <div class="col-4 mt-1">
-                        <label for="contactPersonPhone2" class="form-label">New Password</label>
+                        <label for="contactPersonPhone2" class="form-label">New Password<span style="color: red">&nbsp;*&nbsp;</span></label>
                     </div>
                     <div class="col">
-                        <input type="tel"
+                        <input type="tel" required
                                class="form-control"
                                id="password"
                                name="password"
@@ -211,8 +236,90 @@
                 </div>
 
 
+                @php
+                    if($usermodel->usertype=='distributor'  ||  $usermodel->usertype=='dealer'  || $usermodel->usertype=='manufacturer'  || $usermodel->usertype=='direct_dealer'   ){
+                @endphp
+{{--                <div class="container py-4 d-none standardUser"--}}
+{{--                     style="max-width:700px; border: 1px solid lightgray" id="physical_address_div" >--}}
+                <div class="row  standardUser m-1 p-1 ">
+                    <fieldset style="width: 100%">
+                    <h5>Physical Address</h5>
+                    <hr/>
+                    <div class="row distributorUser m-1 p-1">
+                        <div class="col">
+                            <label class="form-label" for="address">Address<span style="color: red">&nbsp;*&nbsp;</span></label>
+                        </div>
+                        <div class="col">
+                            <input type="text" id="physical_address" required
+                                   class="form-control{{$errors->has('physical_address')?' is-invalid':''}}"
+                                   name="physical_address"
+                                   value="{{$physiaclAddres[0]['address'] ?? ''}}" placeholder="">
+                            {{--                                name="address" value="{{old('address')}}" placeholder="123 Main St.">--}}
+                        </div>
+                    </div>
+                    <div class="row distributorUser m-1 p-1">
+                        <div class="col">
+                            <label class="form-label" for="physical_address2">Address line 2</label>
+                        </div>
+                        <div class="col">
+                            <input type="text" id="physical_address2"
+                                   class="form-control{{$errors->has('physical_address2')?' is-invalid':''}}"
+                                   name="physical_address2"
+                                   value="{{$physiaclAddres[0]['address2']}}"
+                                   placeholder="">
+                            {{--                        Apt / Suite #--}}
+                        </div>
+                    </div>
+
+                    <div class="row distributorUser m-1 p-1">
+                        <div class="col">
+                            <label class="form-label" for="physical_city">City<span style="color: red">&nbsp;*&nbsp;</span></label>
+                        </div>
+                        <div class="col">
+                            <input type="text" id="physical_city"
+                                   class="form-control{{$errors->has('physical_city')?' is-invalid':''}}"
+                                   name="physical_city" value="{{$physiaclAddres[0]['city']}}" >
+                            {{--                        placeholder="Cityville"--}}
+                        </div>
+                    </div>
+                    <div class="row distributorUser m-1 p-1">
+                        <div class="col">
+                            <label class="form-label" for="state">State</label>
+                        </div>
+                        <div class="col">
+                            <select id="physical_state" name="physical_state"
+                                    class="form-control{{$errors->has('physical_state')?' is-invalid':''}}">
+                                @foreach($usStates as $state)
+                                    <option value="{{$state}}" @php if(trim($physiaclAddres[0]['state']) == trim($state)) echo "selected" ; @endphp
+                                    >{{ $state }}</option>
+                                @endforeach
+                                <option value="Taxes">Taxes</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row distributorUser m-1 p-1">
+                        <div class="col">
+                            <label class="form-label" for="physical_zip">Zip Code<span style="color: red">&nbsp;*&nbsp;</span></label>
+                        </div>
+                        <div class="col">
+                            <input type="text" id="physical_zip" required
+                                   class="form-control{{$errors->has('physical_zip')?' is-invalid':''}}"
+                                   name="physical_zip"
+                                   value="{{$physiaclAddres[0]['postal_code']}}"
+                            >
+                            {{--                        placeholder="12345-1234"--}}
+                        </div>
+                    </div>
+                    </fieldset>
+                </div>
+
+
                 <fieldset>
-                    <legend>Shipping Address</legend>
+                    <legend>Shipping Address
+                            <label class="form-label" for="same_phy" style="font-size: 12px">Same As Physical</label>
+                            <input type="checkbox"   name="same_phy" id="same_phy"  />
+                        </legend>
                     <div class="row distributorUser p-1 m-1">
                         <div class="col-3 mt-1">
                             <label for="address" class="form-label">Address</label>
@@ -254,9 +361,9 @@
                             <select id="state" name="state" class="form-select form-control">
                                 @foreach($usStates as $state)
                                     @if(trim($state) == trim($usermodel->address->state))
-                                        <option selected value="{{ $state }}">{{ $state }}</option>
+                                        <option selected value="{{$state}}">{{$state}}</option>
                                     @else
-                                        <option value="{{ $state }}">{{ $state }}</option>
+                                        <option value="{{$state}}">{{$state}}</option>
                                     @endif
                                 @endforeach
                                 <option value="Taxes">Taxes</option>
@@ -271,6 +378,10 @@
                         </div>
                     </div>
                 </fieldset>
+                @php
+                  }
+
+                @endphp
             </div>
 
         </div>
@@ -283,6 +394,24 @@
     </form>
     @section('scripts')
         <script>
+            $(document).ready(function(){
+                $("#same_phy").on("click", function(){
+                    if (this.checked) {
+                        $("#address").val($("#physical_address").val());
+                        $("#address2").val($("#physical_address2").val());
+                        $("#state").val($("#physical_state").val());
+                        $("#inputCity").val($("#physical_city").val());
+                        $("#inputZip").val($("#physical_zip").val());
+                    }
+                    else {
+                        $("#address").val('');
+                        $("#address2").val('');
+                        $("#state").val('');
+                        $("#inputCity").val('');
+                        $("#inputZip").val('');
+                    }
+                });
+            });
             window.onload = function () {
 
 

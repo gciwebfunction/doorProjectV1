@@ -75,8 +75,8 @@
                             class="form-select form-control">
                         @foreach($distributors as $distributor)
                             @if($distributor)
-
-                                <option value="{{$distributor->id}}">{{$distributor->name}}</option>
+                                    <option value="{{$distributor->id}}">{{$distributor->name}}</option>
+{{--                                <option value="{{$distributor->id}}-{{$distributor->name}}">{{$distributor->name}}</option>--}}
                                 
 
                             @endif
@@ -147,10 +147,10 @@
                 </div>
                 <div class="row p-1 m-1">
                     <div class="col">
-                        <label for="passwordConfirm" class="form-label">Password Confirmation</label>
+                        <label for="passwordConfirm" class="form-label">Password Confirmation<span style="color: red">&nbsp;*&nbsp;</span></label>
                     </div>
                     <div class="col">
-                        <input type="password"
+                        <input type="password" required
                                class="form-control"
                                id="password_confirmation"
                                name="password_confirmation">
@@ -162,7 +162,7 @@
                  style="border:1px solid lightgray;max-width: 700px;">
                 <h5><span class="title_user_type"></span> Information</h5>
                 <hr/>
-                <div class="row p-1 m-1">
+                <div class="row p-1 m-1"  id="name_div">
                     <div class="col">
                         <label for="distributorName" class="form-label"><span class="title_user_type"></span> Name</label>
                     </div>
@@ -175,7 +175,7 @@
                                autocomplete="distributorName">
                     </div>
                 </div>
-                <div class="row p-1 m-1 ">
+                <div class="row p-1 m-1 " id="contact_person_div">
                     <div class="col">
                         <label for="contactPerson" class="form-label">Contact Person</label>
                     </div>
@@ -199,7 +199,7 @@
                                value="{{old('contactPersonPhone')}}">
                     </div>
                 </div>
-                <div class="row p-1 m-1 ">
+                <div class="row p-1 m-1 " id="all_contact_div">
                     <div class="col">
                         <label for="contactPerson2" class="form-label">Alt. Contact Person</label>
                     </div>
@@ -211,7 +211,7 @@
                                value="{{old('contactPerson2')}}">
                     </div>
                 </div>
-                <div class="row p-1 m-1 ">
+                <div class="row p-1 m-1 " id="all_contact_phone">
                     <div class="col">
                         <label for="contactPersonPhone2" class="form-label">Alt. Contact Phone</label>
                     </div>
@@ -310,14 +310,14 @@
                                class="form-control{{$errors->has('physical_address2')?' is-invalid':''}}"
                                name="physical_address2"
                                value="{{old('physical_address2')}}"
-                               placeholder="">
+                               placeholder="" >
                         {{--                        Apt / Suite #--}}
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col">
-                        <label class="form-label" for="inputCity">City</label>
+                        <label class="form-label" for="physical_city">City<span style="color: red">&nbsp;*&nbsp;</span></label>
                     </div>
                     <div class="col">
                         <input type="text" id="physical_city"
@@ -358,7 +358,7 @@
             <div class="container py-4 d-none standardUser"
                  style="max-width:700px; border: 1px solid lightgray" id="shipping_address_div" >
                 <h5>Shipping Address
-                    <label class="form-label" for="physical_zip" style="font-size: 12px">Same As Physical</label>
+                    <label class="form-label" for="same_phy" style="font-size: 12px">Same As Physical</label>
                     <input type="checkbox"   name="same_phy" id="same_phy"  />
                 </h5>
                 <hr/>
@@ -387,12 +387,12 @@
 
                 <div class="row">
                     <div class="col">
-                        <label class="form-label" for="inputCity">City</label>
+                        <label class="form-label" for="inputCity">City<span style="color: red">&nbsp;*&nbsp;</span></label>
                     </div>
                     <div class="col">
                         <input type="text" id="inputCity"
                                class="form-control{{$errors->has('inputCity')?' is-invalid':''}}"
-                               name="inputCity" value="{{old('inputCi ty')}}" >
+                               name="inputCity" value="{{old('inputCity')}}" >
 {{--                        placeholder="Cityville"--}}
                     </div>
                 </div>

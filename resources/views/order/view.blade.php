@@ -143,6 +143,7 @@
                                 @endif
                                 {{-- 3rd level flow starts  --}}
 
+
                                 {{-- 2nd level flow starts  --}}
                                 @if($user->usertype == 'manufacturer' &&  $or->current_level == 2 && $or->request_type == '2 level' )
                                     |<a style="border-radius: 2px; border: 1px solid black; background-color: lightgray; padding: 3px" href="/o/editManufacturerform/{{$or->id}}">Edit</a>|<a style="border-radius: 2px; border: 1px solid black; background-color: green; color:white; padding: 3px" href="/o/editManufacturereqconfirm/{{$or->id}}">Confirm</a>

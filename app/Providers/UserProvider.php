@@ -30,6 +30,7 @@ class UserProvider extends ServiceProvider
          * slsmgr-grp
          * sales-grp
          * dealer-grp
+         * direct-dealer
          */
     }
 
@@ -38,6 +39,10 @@ class UserProvider extends ServiceProvider
         return $user->hasGroup('manuf-grp');
     }
 
+    public static function isDirectDealer($user): bool
+    {
+        return $user->hasGroup('direct-dealer-grp');
+    }
     public static function isDistributor($user): bool
     {
         return $user->hasGroup('distributor-grp');
@@ -62,6 +67,8 @@ class UserProvider extends ServiceProvider
     {
         if (self::isManufacturer($user)) {
             return 'manufacturer';
+        } else if (self::isDirectDealer($user)) {
+            return 'direct_dealer';
         } else if (self::isDistributor($user)) {
             return 'distributor';
         } else if (self::isDealer($user)) {
