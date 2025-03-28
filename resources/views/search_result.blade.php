@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>GCI Software</title>
+    <title>Neuma Doors</title>
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
@@ -441,7 +441,7 @@
 
 <div class="p-4 p-md-5 mb-4 text-white rounded bg-dark mt-4">
     <div class="col-md-6 px-0">
-        <h1 class="display-3 ">GCI</h1>
+        <h1 class="display-3 ">Neuma Doors</h1>
         <h1 class="display-4 ">The Online Store</h1>
         <p class="lead my-3">Our team is working to deliver a high-quality, efficient, and productive online catalog,
             facilitating end users with the ability to source their construction needs.</p>

@@ -73,45 +73,45 @@
                                value="{{$usermodel->name}}">
                     </div>
                 </div>
-{{--                @if ($usermodel->usertype == 'distributor' || $usermodel->usertype == 'direct_dealer')--}}
+                {{--                @if ($usermodel->usertype == 'distributor' || $usermodel->usertype == 'direct_dealer')--}}
                 @if ($usermodel->usertype == 'distributor' )
 
                     <input type="hidden" name="associated_manufacturer" value="{{$usermodel->associated_manufacturer}}" >
-{{--                    <div class="row  standardUser p-1 m-1">--}}
-{{--                        <div class="col-4 mt-1">--}}
-{{--                            <label for="associated_manufacturer" class="form-label">Associated Manufacturer</label>--}}
-{{--                        </div>--}}
-{{--                        <div class="col">--}}
-{{--                            <select name="associated_manufacturer"--}}
-{{--                                    class="form-select form-control">--}}
-{{--                                @foreach($manufacturers as $manufacturer)--}}
-{{--                                    @if($manufacturer)--}}
-{{--                                        @if($manufacturer->id == $usermodel->associated_manufacturer)--}}
-{{--                                            <option selected--}}
-{{--                                                    value="{{$manufacturer->id}}">{{$manufacturer->name}}--}}
-{{--                                                - {{$manufacturer->email}}</option>--}}
-{{--                                        @else--}}
-{{--                                            <option--}}
-{{--                                                value="{{$manufacturer->id}}">{{$manufacturer->name}}--}}
-{{--                                                - {{$manufacturer->email}}</option>--}}
-{{--                                        @endif--}}
-{{--                                    @endif--}}
-{{--                                @endforeach--}}
-{{--                            </select>--}}
-{{--                        </div>--}}
-{{--                    </div>--}}
+                    {{--                    <div class="row  standardUser p-1 m-1">--}}
+                    {{--                        <div class="col-4 mt-1">--}}
+                    {{--                            <label for="associated_manufacturer" class="form-label">Associated Manufacturer</label>--}}
+                    {{--                        </div>--}}
+                    {{--                        <div class="col">--}}
+                    {{--                            <select name="associated_manufacturer"--}}
+                    {{--                                    class="form-select form-control">--}}
+                    {{--                                @foreach($manufacturers as $manufacturer)--}}
+                    {{--                                    @if($manufacturer)--}}
+                    {{--                                        @if($manufacturer->id == $usermodel->associated_manufacturer)--}}
+                    {{--                                            <option selected--}}
+                    {{--                                                    value="{{$manufacturer->id}}">{{$manufacturer->name}}--}}
+                    {{--                                                - {{$manufacturer->email}}</option>--}}
+                    {{--                                        @else--}}
+                    {{--                                            <option--}}
+                    {{--                                                value="{{$manufacturer->id}}">{{$manufacturer->name}}--}}
+                    {{--                                                - {{$manufacturer->email}}</option>--}}
+                    {{--                                        @endif--}}
+                    {{--                                    @endif--}}
+                    {{--                                @endforeach--}}
+                    {{--                            </select>--}}
+                    {{--                        </div>--}}
+                    {{--                    </div>--}}
 
                 @elseif ($usermodel->usertype=='direct_dealer')
                     <input type="hidden" name="associated_manufacturer" value="{{$usermodel->associated_manufacturer}}" >
                 @elseif ($usermodel->usertype=='manufacturer')
-{{--                    <div class="row  standardUser p-1 m-1">--}}
-{{--                        <div class="col-2 mt-1">--}}
-{{--                            <label for="name" class="form-label">User Info</label>--}}
-{{--                        </div>--}}
-{{--                        <div class="col mt-1">--}}
-{{--                            <p>This is a manufacturer user and has editing limitations.</p>--}}
-{{--                        </div>--}}
-{{--                    </div>--}}
+                    {{--                    <div class="row  standardUser p-1 m-1">--}}
+                    {{--                        <div class="col-2 mt-1">--}}
+                    {{--                            <label for="name" class="form-label">User Info</label>--}}
+                    {{--                        </div>--}}
+                    {{--                        <div class="col mt-1">--}}
+                    {{--                            <p>This is a manufacturer user and has editing limitations.</p>--}}
+                    {{--                        </div>--}}
+                    {{--                    </div>--}}
                 @endif
 
                 @if($usermodel->usertype!='distributor' && $usermodel->usertype != 'manufacturer' && $usermodel->usertype != 'direct_dealer' &&  $usermodel->usertype!='sales_manager' &&  $usermodel->usertype!='sales' )
@@ -129,10 +129,10 @@
                                     @if($distributor)
                                         @if($distributor->id == $usermodel->distributor_id)
                                             <option selected
-                                                value="{{$distributor->id}}">{{$distributor->name}}</option>
+                                                    value="{{$distributor->id}}">{{$distributor->name}}</option>
                                         @else
                                             <option
-                                                value="{{$distributor->id}}">{{$distributor->name}}</option>
+                                                    value="{{$distributor->id}}">{{$distributor->name}}</option>
                                         @endif
                                     @endif
                                 @endforeach
@@ -144,16 +144,16 @@
                 @php
                     if($usermodel->usertype=='distributor'     ){
                 @endphp
-                    <div class="row distributorUser m-1 p-1">
-                        <div class="col-4 mt-1">
-                            Distributor Name
-                        </div>
-                        <div class="col">
-                            <input type="text" class="form-control"
-                                   name="distributorName" id="distributorName"
-                                   value="{{$contactinfo->distributor_name??old('distributorName')}}">
-                        </div>
+                <div class="row distributorUser m-1 p-1">
+                    <div class="col-4 mt-1">
+                        Distributor Name
                     </div>
+                    <div class="col">
+                        <input type="text" class="form-control"
+                               name="distributorName" id="distributorName"
+                               value="{{$contactinfo->distributor_name??old('distributorName')}}">
+                    </div>
+                </div>
                 @php
                     }
                 @endphp
@@ -163,63 +163,63 @@
                     if($usermodel->usertype=='distributor'  ||  $usermodel->usertype=='dealer'  || $usermodel->usertype=='manufacturer'  || $usermodel->usertype=='direct_dealer'   ){
                 @endphp
                 <div class="row   distributorUser m-1 p-1">
-                        <div class="col-4 mt-1">
-                            <label for="contactPerson" class="form-label">Contact Person</label>
-                        </div>
-                        <div class="col">
-                            <input type="text"
-                                   class="form-control{{$errors->has('contactPerson')?' is-invalid': '' }}"
-                                   id="contactPerson"
-                                   name="contactPerson"
-                                   value="{{$contactinfo->primary_contact??old('contactPerson')}}">
-                        </div>
+                    <div class="col-4 mt-1">
+                        <label for="contactPerson" class="form-label">Contact Person</label>
                     </div>
+                    <div class="col">
+                        <input type="text"
+                               class="form-control{{$errors->has('contactPerson')?' is-invalid': '' }}"
+                               id="contactPerson"
+                               name="contactPerson"
+                               value="{{$contactinfo->primary_contact??old('contactPerson')}}">
+                    </div>
+                </div>
                 @php
-                }
+                    }
                 @endphp
 
-                    <div class="row   distributorUser p-1 m-1">
-                        <div class="col-4 mt-1">
-                            <label for="contactPersonPhone" class="form-label">Contact Phone</label>
-                        </div>
-                        <div class="col">
-                            <input type="tel"
-                                   class="form-control{{$errors->has('contactPersonPhone')?' is-invalid': '' }}"
-                                   id="contactPersonPhone"
-                                   name="contactPersonPhone"
-                                   value="{{$contactinfo->primary_phone??old('contactPersonPhone')}}">
-
-                        </div>
+                <div class="row   distributorUser p-1 m-1">
+                    <div class="col-4 mt-1">
+                        <label for="contactPersonPhone" class="form-label">Contact Phone</label>
                     </div>
+                    <div class="col">
+                        <input type="tel"
+                               class="form-control{{$errors->has('contactPersonPhone')?' is-invalid': '' }}"
+                               id="contactPersonPhone"
+                               name="contactPersonPhone"
+                               value="{{$contactinfo->primary_phone??old('contactPersonPhone')}}">
+
+                    </div>
+                </div>
                 @php
                     if($usermodel->usertype=='distributor'  ||  $usermodel->usertype=='dealer'  || $usermodel->usertype=='manufacturer'  || $usermodel->usertype=='direct_dealer'   ){
                 @endphp
-                    <div class="row   distributorUser p-1 m-1">
-                        <div class="col-4 mt-1">
-                            <label for="contactPerson2" class="form-label">Alt. Contact Person</label>
-                        </div>
-                        <div class="col">
-                            <input type="text"
-                                   class="form-control{{$errors->has('contactPerson2')?' is-invalid': '' }}"
-                                   id="contactPerson2"
-                                   name="contactPerson2"
-                                   value="{{$contactinfo->secondary_contact??old('contactPerson2')}}">
-                        </div>
+                <div class="row   distributorUser p-1 m-1">
+                    <div class="col-4 mt-1">
+                        <label for="contactPerson2" class="form-label">Alt. Contact Person</label>
                     </div>
-                    <div class="row   distributorUser p-1 m-1">
-                        <div class="col-4 mt-1">
-                            <label for="contactPersonPhone2" class="form-label">Alt. Contact Phone</label>
-                        </div>
-                        <div class="col">
-                            <input type="tel"
-                                   class="form-control{{$errors->has('contactPersonPhone2')?' is-invalid': '' }}"
-                                   id="contactPersonPhone2"
-                                   name="contactPersonPhone2"
-                                   value="{{$contactinfo->secondary_phone??old('contactPersonPhone2')}}">
-                        </div>
+                    <div class="col">
+                        <input type="text"
+                               class="form-control{{$errors->has('contactPerson2')?' is-invalid': '' }}"
+                               id="contactPerson2"
+                               name="contactPerson2"
+                               value="{{$contactinfo->secondary_contact??old('contactPerson2')}}">
                     </div>
+                </div>
+                <div class="row   distributorUser p-1 m-1">
+                    <div class="col-4 mt-1">
+                        <label for="contactPersonPhone2" class="form-label">Alt. Contact Phone</label>
+                    </div>
+                    <div class="col">
+                        <input type="tel"
+                               class="form-control{{$errors->has('contactPersonPhone2')?' is-invalid': '' }}"
+                               id="contactPersonPhone2"
+                               name="contactPersonPhone2"
+                               value="{{$contactinfo->secondary_phone??old('contactPersonPhone2')}}">
+                    </div>
+                </div>
                 @php
-                }
+                    }
                 @endphp
 
                 <div class="row   distributorUser p-1 m-1">
@@ -239,87 +239,97 @@
                 @php
                     if($usermodel->usertype=='distributor'  ||  $usermodel->usertype=='dealer'  || $usermodel->usertype=='manufacturer'  || $usermodel->usertype=='direct_dealer'   ){
                 @endphp
-{{--                <div class="container py-4 d-none standardUser"--}}
-{{--                     style="max-width:700px; border: 1px solid lightgray" id="physical_address_div" >--}}
+                {{--                <div class="container py-4 d-none standardUser"--}}
+                {{--                     style="max-width:700px; border: 1px solid lightgray" id="physical_address_div" >--}}
                 <div class="row  standardUser m-1 p-1 ">
                     <fieldset style="width: 100%">
-                    <h5>Physical Address</h5>
-                    <hr/>
-                    <div class="row distributorUser m-1 p-1">
-                        <div class="col">
-                            <label class="form-label" for="address">Address<span style="color: red">&nbsp;*&nbsp;</span></label>
+                        <h5>Physical Address</h5>
+                        <hr/>
+                        <div class="row distributorUser m-1 p-1">
+                            <div class="col">
+                                <label class="form-label" for="address">Address<span style="color: red">&nbsp;*&nbsp;</span></label>
+                            </div>
+                            <div class="col">
+                                <input type="text" id="physical_address" required
+                                       class="form-control{{$errors->has('physical_address')?' is-invalid':''}}"
+                                       name="physical_address"
+                                       value="{{$physiaclAddres[0]['address'] ?? ''}}" placeholder="">
+                                {{--                                name="address" value="{{old('address')}}" placeholder="123 Main St.">--}}
+                            </div>
                         </div>
-                        <div class="col">
-                            <input type="text" id="physical_address" required
-                                   class="form-control{{$errors->has('physical_address')?' is-invalid':''}}"
-                                   name="physical_address"
-                                   value="{{$physiaclAddres[0]['address'] ?? ''}}" placeholder="">
-                            {{--                                name="address" value="{{old('address')}}" placeholder="123 Main St.">--}}
+                        <div class="row distributorUser m-1 p-1">
+                            <div class="col">
+                                <label class="form-label" for="physical_address2">Address line 2</label>
+                            </div>
+                            <div class="col">
+                                <input type="text" id="physical_address2"
+                                       class="form-control{{$errors->has('physical_address2')?' is-invalid':''}}"
+                                       name="physical_address2"
+                                       value="{{$physiaclAddres[0]['address2'] ?? ''}}"
+                                       placeholder="">
+                                {{--                        Apt / Suite #--}}
+                            </div>
                         </div>
-                    </div>
-                    <div class="row distributorUser m-1 p-1">
-                        <div class="col">
-                            <label class="form-label" for="physical_address2">Address line 2</label>
-                        </div>
-                        <div class="col">
-                            <input type="text" id="physical_address2"
-                                   class="form-control{{$errors->has('physical_address2')?' is-invalid':''}}"
-                                   name="physical_address2"
-                                   value="{{$physiaclAddres[0]['address2']}}"
-                                   placeholder="">
-                            {{--                        Apt / Suite #--}}
-                        </div>
-                    </div>
 
-                    <div class="row distributorUser m-1 p-1">
-                        <div class="col">
-                            <label class="form-label" for="physical_city">City<span style="color: red">&nbsp;*&nbsp;</span></label>
-                        </div>
-                        <div class="col">
-                            <input type="text" id="physical_city"
-                                   class="form-control{{$errors->has('physical_city')?' is-invalid':''}}"
-                                   name="physical_city" value="{{$physiaclAddres[0]['city']}}" >
-                            {{--                        placeholder="Cityville"--}}
-                        </div>
-                    </div>
-                    <div class="row distributorUser m-1 p-1">
-                        <div class="col">
-                            <label class="form-label" for="state">State</label>
-                        </div>
-                        <div class="col">
-                            <select id="physical_state" name="physical_state"
-                                    class="form-control{{$errors->has('physical_state')?' is-invalid':''}}">
-                                @foreach($usStates as $state)
-                                    <option value="{{$state}}" @php if(trim($physiaclAddres[0]['state']) == trim($state)) echo "selected" ; @endphp
-                                    >{{ $state }}</option>
-                                @endforeach
-                                <option value="Taxes">Taxes</option>
-                            </select>
-                        </div>
-                    </div>
+                        <div class="row distributorUser m-1 p-1">
+                            <div class="col">
+                                <label class="form-label" for="physical_city">City<span style="color: red">&nbsp;*&nbsp;</span></label>
+                            </div>
+                            <div class="col">
+                                <input type="text" id="physical_city"
+                                       class="form-control{{$errors->has('physical_city')?' is-invalid':''}}"
+                                       name="physical_city"
+                                       value="{{$physiaclAddres[0]['city'] ?? ''}}" >
 
-                    <div class="row distributorUser m-1 p-1">
-                        <div class="col">
-                            <label class="form-label" for="physical_zip">Zip Code<span style="color: red">&nbsp;*&nbsp;</span></label>
+                                {{--               value="{{$physiaclAddres[0]['city']}}" >         placeholder="Cityville"--}}
+                            </div>
                         </div>
-                        <div class="col">
-                            <input type="text" id="physical_zip" required
-                                   class="form-control{{$errors->has('physical_zip')?' is-invalid':''}}"
-                                   name="physical_zip"
-                                   value="{{$physiaclAddres[0]['postal_code']}}"
-                            >
-                            {{--                        placeholder="12345-1234"--}}
+                        <div class="row distributorUser m-1 p-1">
+                            <div class="col">
+                                <label class="form-label" for="state">State</label>
+                            </div>
+                            <div class="col">
+                                <select id="physical_state" name="physical_state"
+                                        class="form-control{{$errors->has('physical_state')?' is-invalid':''}}">
+                                    @foreach($usStates as $state)
+                                        <option value="{{$state}}"
+                                                @php
+
+
+                                                    if ( !empty ( $physiaclAddres[0]['state'])  &&  (trim($physiaclAddres[0]['state'] ) == trim($state)) ) {
+                                                            echo "selected" ;
+                                                    }
+
+                                                @endphp
+                                        >{{ $state }}</option>
+                                    @endforeach
+                                    <option value="Taxes">Taxes</option>
+                                </select>
+                            </div>
                         </div>
-                    </div>
+
+                        <div class="row distributorUser m-1 p-1">
+                            <div class="col">
+                                <label class="form-label" for="physical_zip">Zip Code<span style="color: red">&nbsp;*&nbsp;</span></label>
+                            </div>
+                            <div class="col">
+                                <input type="text" id="physical_zip" required
+                                       class="form-control{{$errors->has('physical_zip')?' is-invalid':''}}"
+                                       name="physical_zip"
+                                       value="{{$physiaclAddres[0]['postal_code']?? ''}}"
+                                >
+                                {{--                        placeholder="12345-1234"--}}
+                            </div>
+                        </div>
                     </fieldset>
                 </div>
 
 
                 <fieldset>
                     <legend>Shipping Address
-                            <label class="form-label" for="same_phy" style="font-size: 12px">Same As Physical</label>
-                            <input type="checkbox"   name="same_phy" id="same_phy"  />
-                        </legend>
+                        <label class="form-label" for="same_phy" style="font-size: 12px">Same As Physical</label>
+                        <input type="checkbox"   name="same_phy" id="same_phy"  />
+                    </legend>
                     <div class="row distributorUser p-1 m-1">
                         <div class="col-3 mt-1">
                             <label for="address" class="form-label">Address</label>
@@ -379,7 +389,7 @@
                     </div>
                 </fieldset>
                 @php
-                  }
+                    }
 
                 @endphp
             </div>

@@ -29,6 +29,7 @@ class DoorViewObject
 
     private $glass_grid;
 
+    private $glass_option;
 
     private $glassoption;
 
@@ -71,7 +72,7 @@ class DoorViewObject
 
     private $assemble_knock;
 
-
+    private $mull_kit;
     //private $quantity;
 
     //private $spec;
@@ -253,20 +254,37 @@ class DoorViewObject
 
 
 
+    public function getMullKit()
+    {
+        return $this->mull_kit;
+    }
+
+    /**
+     * @param mixed $mull_kit
+     */
+    public function setMullKit($mull_kit): void
+    {
+        $this->mull_kit = $mull_kit;
+    }
+
+
+
     /**
      * @return mixed
      */
     public function getGlassoption()
     {
-        return $this->glassoption;
+        //return $this->glassoption;
+        return $this->glass_option;
     }
 
     /**
      * @param mixed $glassoption
      */
-    public function setGlassoption($glassoption): void
+    public function setGlassoption($glass_option): void
     {
-        $this->glassoption = $glassoption;
+        //$this->glassoption = $glassoption;
+        $this->glass_option = $glass_option;
     }
 
     /**

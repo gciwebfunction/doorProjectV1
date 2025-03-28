@@ -83,9 +83,13 @@
                     <select name="door_size_select" id="doorSizeSelect" size="1"
                             style="width: 400px" disabled required>
                         <option value="">Select a size...</option>
-                        @foreach($door->doorMeasurements as $m)
+
+                        @foreach($door_measurements as $m)
                             <option value="{{$m->id}}">{{$m->width}} x {{$m->height}}</option>
                         @endforeach
+{{--                        @foreach($door->doorMeasurements as $m)--}}
+{{--                            <option value="{{$m->id}}">{{$m->width}} x {{$m->height}}</option>--}}
+{{--                        @endforeach--}}
                     </select>
                     <input type="hidden" id="door_size_sel_pr" value="">
 
@@ -509,14 +513,23 @@
                         <option>Please select a Mull kit option...</option>
                     </select>
                     <input type="hidden" id="oldmullkitOptionSelect" value="{{old('mull_kit_select')}}">
-                    <input type="hidden" id="mull_kit_pr" value="" name="mull_kit_pr">
+                    <input type="hidden" id="mull_kit_pr" class="hiddeee"  value="" name="mull_kit_pr">
                 </div>
             </div>
             @php
                 }
+
+            // gliding  / hide hinge optoin
+            // 1009,1010, 1011, 1012,1013, 1014 , 1015 , 1016 , 1030 , 1031
+            $glging       = array(1009,1010, 1011, 1012,1013, 1014 , 1015 , 1016 , 1030 , 1031);
+
+            // fixed panels  / hide hinge / handle and lock color
+            $fixed_panel_doors       = array(1015 ,1016,1017,1018 ,1019, 1102  ,1103,1104);
+            if(!in_array($door->id,$fixed_panel_doors)){
+
+
+
             @endphp
-
-
 
             {{--  HANLDLE COLOR--}}
             <div class="row flex m-3">
@@ -554,6 +567,7 @@
                 </div>
             </div>
 
+            @php }   @endphp
             {{--  SILL COLOR--}}
             <div class="row flex m-3">
                 <div class="col-3" style="text-align: left" >
@@ -572,6 +586,11 @@
 
 
             {{--  HINGE_COLOR_OPTION --}}
+            @php
+                if(!in_array($door->id,$fixed_panel_doors)){
+                    if(!in_array($door->id,$glging)){
+
+            @endphp
             <div class="row flex m-3">
                 <div class="col-3" style="text-align: left" >
                     Hinge Color
@@ -586,7 +605,8 @@
                     <div id="hingecolorOptionSelectError" class="ErrorRed" style="display: none;">Hinge Color is required</div>
                 </div>
             </div>
-
+            @php } }
+            @endphp
 
 
 
@@ -616,7 +636,7 @@
 
 
 
-            @php   if($door->id != 1111) { @endphp
+            @php    // if($door->id != 1111) { @endphp
             <div class="row flex m-3">
                 <div class="col-3" style="text-align: left" >Assemble Option / Knocked Down </div>
 
@@ -635,10 +655,10 @@
                 </div>
             </div>
 
-            @php   } else{    @endphp
-            <input type="hidden"  name="assemble_knock" id="assemble_knocked_option_select" value="0">
+            @php   /* } else{   */ @endphp
+{{--            <input type="hidden"  name="assemble_knock" id="assemble_knocked_option_select" value="0">--}}
 
-            @php } @endphp
+            @php /* } */ @endphp
 
 
             {{--            <div class="row flex m-3">--}}

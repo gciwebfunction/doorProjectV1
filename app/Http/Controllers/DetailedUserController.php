@@ -27,11 +27,13 @@ class DetailedUserController extends Controller
         $usStates = Constants::getStates();
         View::share('usStates', $usStates);
 
-        $this->middleware(['groups:manuf-grp']);
+        //$this->middleware(['groups:manuf-grp,slsmgr-grp']);
     }
 
     public function view()
     {
+
+        //die('sdsdd');
         $users = User::orderby('created_at', 'asc')->get();
 
         foreach ($users as $user) {

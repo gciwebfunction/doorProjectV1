@@ -40,12 +40,15 @@ class ProductUtility
                     $viewObject->setHandling($modifier->door_modifier_value);
                     break;
                 case 'GLASS_GRID':
-                    $viewObject->setGrid($modifier->door_modifier_value);
+                    //$viewObject->setGrid($modifier->door_modifier_value);
+                    $viewObject->setGlassGrid($modifier->door_modifier_value);
+                    //$viewObject->setGlassoption($modifier->door_modifier_value);
                     break;
                 case 'GLASS_DEPTH':
                     $viewObject->setDepth($modifier->door_modifier_value);
                     break;
                 case 'GLASS_OPTION':
+                    //$viewObject->setGlassoption($modifier->door_modifier_value);
                     $viewObject->setGlassoption($modifier->door_modifier_value);
                     break;
                 case 'LOWE':
@@ -109,6 +112,9 @@ class ProductUtility
 
                 case 'SCREEN_OPTION':
                     $viewObject->setScreenOption($modifier->door_modifier_value);
+                    break;
+                case 'MULL_KIT':
+                    $viewObject->setMullKit($modifier->door_modifier_value);
                     break;
 
             }

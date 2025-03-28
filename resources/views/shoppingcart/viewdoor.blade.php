@@ -48,23 +48,32 @@
                         <th>Color</th>
                         <th>Door Handling</th>
                         <th>DP</th>
-                        <th>Blind</th>
                         <th>Glass</th>
+                        <th>Blind</th>
                         <th>Glass Grid</th>
-                        <th>3/4 Lite</th>
-                        <th>Handle</th>
-                        <th>Lock</th>
-
                         <th>Frame </th>
+                        <th>3/4 Lite</th>
+
+
+                        <th>Mull</th>
+
 
 
                         <th>Sill</th>
+                        <th>Lock</th>
+                        <th>Handle</th>
                         <th>Screen</th>
+                        <th>Assemble</th>
+
+
+
                         <th>Handle Color</th>
                         <th>Lock Color</th>
                         <th>Sill Color</th>
                         <th>Hinge Color</th>
-                        <th>Assemble</th>
+
+
+
                         <th>Qty</th>
                         <th>Price</th>
                         <th></th>
@@ -75,6 +84,8 @@
                         @php foreach($doorViewItems as $item){
                            // echo '<pre>';var_dump($item);echo '</pre>';
 
+                           //echo '<pre>'; var_dump($item);die;
+
     $wq = $item->getQuantity(); $pp = $item->getPrice(); $ppp = $pp * $wq; @endphp
                             <tr style="vertical-align: top" id="itemRow1-{{$item->getId()}}">
 
@@ -84,29 +95,32 @@
                                 <td>{{$item->getColor()}}</td>
                                 <td>{{$item->getHandling()}}</td>
                                 <td>{{$item->getDpOption()}}</td>
+                                <td>{{$item->getGlassoption()}}</td>
                                 <td>{{$item->getblindOption()}}</td>
                                 <td>{{$item->getGlassGrid()}}</td>
-                                <td>{{$item->getGlassoption()}}</td>
-
-
-
+                                <td>{{$item->getFrameThicknessOption()}}</td>
                                 <td>{{$item->getliteOption()}}</td>
 
-                                <td>{{$item->getHandle()}}</td>
-                                <td>{{$item->getLock()}}</td>
-
-                                <td>{{$item->getFrameThicknessOption()}}</td>
-
-
+                                <td>{{$item->getMullKit()}}</td>
                                 <td>{{$item->getsillOption()}}</td>
+
+
+
+                                <td>{{$item->getLock()}}</td>
+                                <td>{{$item->getHandle()}}</td>
                                 <td>{{$item->getScreenOption()}}</td>
+                                <td>{{$item->getassembleOption()}}</td>
+
+
+
 
 
                                 <td>{{$item->gethandleColor()}}</td>
                                 <td>{{$item->getlockColor()}}</td>
                                 <td>{{$item->getsillColor()}}</td>
                                 <td>{{$item->gethingeColor()}}</td>
-                                <td>{{$item->getassembleOption()}}</td>
+
+
                                 <td>{{$item->getQuantity()}}</td>
                                 <td >${{sprintf('%01.2f',$ppp )}}</td>
                                 <input type="hidden" name="pricy-{{$item->getId()}}" id="pricy-{{$item->getId()}}" class="pricy" value="{{sprintf('%01.2f',$ppp )}}" >

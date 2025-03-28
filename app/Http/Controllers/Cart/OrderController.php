@@ -118,7 +118,8 @@ class OrderController extends Controller
         if($user->usertype  == 'dealer') {
             $request_type   = '3 level';
             //$request_level  = '2';
-        }elseif($user->usertype == 'Direct dealer' || $user->usertype=='distributor' ){
+        //}elseif($user->usertype == 'Direct dealer' || $user->usertype=='distributor' ){
+        }elseif($user->usertype == 'direct_dealer' || $user->usertype=='distributor' ){
             $request_type   = '2 level';
             //$request_level  = '2';
         }else{
@@ -551,6 +552,10 @@ class OrderController extends Controller
             }
             //dd('sdsdssdsad');
             //return redirect()->action('OrderController@showOrders');
+
+            // here if the step is two and 
+
+
             return redirect()->route('oview');
         }else{
             return redirect()->route('oview');
@@ -639,7 +644,7 @@ class OrderController extends Controller
 
         $OrderRequestNote          = DB::table('order_request_notes')->where('order_request_id', $orRequestId)->get();
         $orderRequestmsgs          = DB::table('order_request_messages')->where('order_request_id', $orRequestId)->get();
-//,dd($orderRequest);
+        //dd($item_arr);
 
         return view('order.EditManufacturerView', [
             'orderRequest'          => $orderRequest,
@@ -764,11 +769,15 @@ class OrderController extends Controller
     // methods for the 3 level
     public function editManufacturereqconfirm($orReqId){
 
+        ini_set('display_errors', '1');
+        ini_set('display_startup_errors', '1');
+        error_reporting(E_ALL);
+
         $order_req      = OrderRequest::findOrFail($orReqId);
         //$order_req_data = $order_req->toArray();
         //$request_type   = $order_req_data['request_type'];
 
-        //dd($order_req_data->doorItems());
+        //dd($order_req->request_type == '3 level');
 
 
         //dd($order_req);
@@ -920,6 +929,9 @@ class OrderController extends Controller
             }
             return redirect()->route('oview', ['oId' => $ordreR_od]);
         }
+
+
+        die("Nothing Nothing");
     }
 
 

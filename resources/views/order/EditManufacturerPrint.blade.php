@@ -60,6 +60,7 @@
                                         <th>Door Handling</th>
                                         <th>DP Option</th>
                                         <th>Blind</th>
+                                        <th>Glass Option</th>
                                         <th>Glass Grid</th>
                                         <th>3/4 Lite</th>
                                         <th>Handle</th>
@@ -93,7 +94,9 @@
                                             <td>@isset($item['HANDLING']){{$item['HANDLING']}}@endisset</td>
                                             <td>@isset($item['DP_OPTION']){{$item['DP_OPTION']}}@endisset</td>
                                             <td>@isset($item['BLIND_OPTION']){{$item['BLIND_OPTION']}}@endisset</td>
+                                            <td>@isset($item['GLASS_OPTION']){{$item['GLASS_OPTION']}}@endisset</td>
                                             <td>@isset($item['GLASS_GRID']){{$item['GLASS_GRID']}}@endisset</td>
+
                                             <td>@isset($item['LITE_OPTION']){{$item['LITE_OPTION']}}@endisset</td>
                                             <td>@isset($item['HANDLE']){{$item['HANDLE']}}@endisset</td>
                                             <td>@isset($item['LOCK']){{$item['LOCK']}}@endisset</td>

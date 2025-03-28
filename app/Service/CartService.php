@@ -18,7 +18,7 @@ class CartService
         if (isset($shoppingCart)) {
             return $shoppingCart;
         }
-        echo
+        //echo
         $shoppingCart = new ShoppingCart();
         $shoppingCart->user_id = $id;
         $shoppingCart->is_active = 1;

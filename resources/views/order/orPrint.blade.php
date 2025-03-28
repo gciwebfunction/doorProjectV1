@@ -109,6 +109,7 @@
                             <th>Door Handling</th>
                             <th>DP Option</th>
                             <th>Blind</th>
+                            <th>Glass Option</th>
                             <th>Glass Grid</th>
                             <th>3/4 Lite</th>
                             <th>Handle</th>
@@ -144,7 +145,8 @@
 
                                 <td>{{$item->dp_option}}</td>
                                 <td>{{$item->blind_option}}</td>
-                                <td>{{$item->glass_grid}}</td>
+                                    <td>{{$item->glass_material}}</td>
+                                    <td>{{$item->glass_grid}}</td>
                                 <td>{{$item->lite_option}}</td>
 
                                 <td>{{$item->handle}}</td>

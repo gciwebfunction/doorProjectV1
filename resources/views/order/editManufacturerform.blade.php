@@ -76,6 +76,7 @@
                                     <th>Door Handling</th>
                                     <th>DP Option</th>
                                     <th>Blind</th>
+                                    <th>Glass Option</th>
                                     <th>Glass Grid</th>
                                     <th>3/4 Lite</th>
                                     <th>Handle</th>
@@ -111,6 +112,7 @@
                                         <td>@isset($item['HANDLING']){{$item['HANDLING']}}@endisset</td>
                                         <td>@isset($item['DP_OPTION']){{$item['DP_OPTION']}}@endisset</td>
                                         <td>@isset($item['BLIND_OPTION']){{$item['BLIND_OPTION']}}@endisset</td>
+                                        <td>@isset($item['GLASS_OPTION']){{$item['GLASS_OPTION']}}@endisset</td>
                                         <td>@isset($item['GLASS_GRID']){{$item['GLASS_GRID']}}@endisset</td>
                                         <td>@isset($item['LITE_OPTION']){{$item['LITE_OPTION']}}@endisset</td>
                                         <td>@isset($item['HANDLE']){{$item['HANDLE']}}@endisset</td>
@@ -123,11 +125,16 @@
                                         <td>@isset($item['SILL_COLOR_OPTION']){{$item['SILL_COLOR_OPTION']}}@endisset</td>
                                         <td>@isset($item['HINGE_COLOR_OPTION']){{$item['HINGE_COLOR_OPTION']}}@endisset</td>
                                         <td>@isset($item['assemble_knock']){{$item['assemble_knock']}}@endisset</td>
-                                        <td>{{$item['quantity']}} <input type="hidden" value="{{$item['quantity']}}" id="item_qty{{$item['item_id']}}"></td>
+                                        <td>
+                                            {{-- $item['quantity'] --}}
+                                            <input type="text"   value="{{$item['quantity']}}" id="item_qty{{$item['item_id']}}" class="form-control qty_change" onchange="dis_type('{{$item['item_id']}}')">
+{{--                                            <input type="hidden" value="{{$item['quantity']}}" id="item_qty{{$item['item_id']}}">--}}
+                                        </td>
                                         <td>{{$item['price']}} <input type="hidden" value="{{$item['price']}}" id="item_price{{$item['item_id']}}"></td>
 {{--                                        <td>{{$item->price*$item->quantity}} </td>--}}
 
                                         <td><select {{$readonly}} class="form-control" name="discount_type[]" id="amtpe{{$item['item_id']}}" >
+                                                <option value="" {{ ($item['discount_type']=="")? "selected" : "" }}>No</option>
                                                 <option value="%" {{ ($item['discount_type']=="%")? "selected" : "" }}>%</option>
                                                 <option value="Amt" {{ ($item['discount_type']=="Amt")? "selected" : "" }}>Amt</option>
                                             </select></td>
@@ -515,8 +522,8 @@
                                                         $('#total_text').text(last_vel);
                                                         $('#total').val(last_vel);
                                                     }
-
-                                                    if(add_disc_typing == 'Amt'){
+                                                    // else
+                                                     if(add_disc_typing == 'Amt'){
                                                         //add_disc_cal_val    =  parseFloat( parseFloat(allitems_subtotal) * (parseFloat(add_disc_valing)/100));
                                                         //alert(add_disc_valing);
                                                         add_disc_cal_val    =  parseFloat( add_disc_valing);
@@ -541,6 +548,24 @@
                                                         $('#total_text').text(last_vel);
                                                         $('#total').val(last_vel);
                                                     }
+
+                                                    /*else{
+                                                        add_disc_cal_val    =  parseFloat( add_disc_valing);
+                                                        comp_discount       = add_disc_cal_val + allitems_discount;
+                                                        comp_discount       = parseFloat(comp_discount);
+                                                        $('#add_disc_text').html(add_disc_cal_val);
+                                                        $('#add_disc_amt').val(add_disc_cal_val);
+                                                        $('#total_disc_amt').val(comp_discount);
+
+                                                        deliver_charge      = parseFloat( $('#delivery_charges').val());
+                                                        var m_fe            = parseFloat( $('#mull_fee').val());
+                                                        var total_va_tmp    = parseFloat($('#total_value').text());
+
+                                                        last_vel            = total_va_tmp + m_fe +deliver_charge-add_disc_cal_val;
+                                                        last_vel            = parseFloat(last_vel).toFixed(2);
+                                                        $('#total_text').text(last_vel);
+                                                        $('#total').val(last_vel);
+                                                    } */
                                                 });
                                             });
                                         </script>
@@ -699,6 +724,9 @@
 
         var total_disc_amt_sum      = 0;
 
+
+
+
         function dis_type(idd){
             var sum                     = 0;
             var amtpe               = "#amtpe"+idd;
@@ -714,32 +742,40 @@
             var subtotal_price      = "#subtotal_price"+idd;
             var total_text          = "#total_text";
             var quartnitit          = parseFloat($("#item_qty"+idd).val());
+            //alert(quartnitit);
+            //alert(amtpeval);
 
 
             var sumii;
 
             var discountedamtind = 0;
-            if(amtpeval =='%'){
-                //discamountaftercal = ;
-                discountedamtind =  parseFloat( parseFloat(item_pr_prval) * (parseFloat(discamountcalval)/100));
+            if(amtpeval =='%' ){
+                //if(parseFloat(discamountcalval) >=1 ){
+                        //discamountaftercal = ;
+                        discountedamtind =  parseFloat( parseFloat(item_pr_prval) * (parseFloat(discamountcalval)/100));
 
-                subtotal_price_val = (parseFloat(item_pr_prval) -    discountedamtind) * quartnitit;
-                $(subtotal_price).val(subtotal_price_val);
+                        subtotal_price_val = (parseFloat(item_pr_prval) -    discountedamtind) * quartnitit;
+                        $(subtotal_price).val(subtotal_price_val);
+
+                        // assign value to the amt
+                        $("#discountedamtind"+idd).val(parseFloat(discountedamtind*quartnitit));
 
 
 
-                // assign value to the amt
-                $("#discountedamtind"+idd).val(parseFloat(discountedamtind*quartnitit));
-
-
-            }else{
+            }else  if(amtpeval =='Amt' ){
                 discountedamtind =  parseFloat( parseFloat(item_pr_prval) - parseFloat(discamountcalval));
                 subtotal_price_val = (parseFloat( discountedamtind) ) * quartnitit;
                 $(subtotal_price).val(subtotal_price_val);
                 $("#discountedamtind"+idd).val(parseFloat(parseInt(discamountcalval)*quartnitit));
 
-
+            }else{
+                //alert('adadd');
+                // case when quantity is increased and there is no discount
+                subtotal_price_val = (parseFloat( item_pr_prval) ) * quartnitit;
+                $(subtotal_price).val(subtotal_price_val);
+                //$("#discountedamtind"+idd).val(parseFloat(parseInt(item_pr_prval)*quartnitit));
             }
+
 
             $('.form-control.subtotal_price').each(function(){
                 sum+= parseFloat($(this).val());
@@ -749,7 +785,9 @@
             sumii = sum;
             var total_disc_amt_sum = 0;
             $('.form-control.discountedamt').each(function(){
-                total_disc_amt_sum+= parseFloat($(this).val());
+                if(parseFloat($(this).val()) >= 1){
+                    total_disc_amt_sum+= parseFloat($(this).val());
+                }
             });
 
 

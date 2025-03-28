@@ -43,7 +43,7 @@
 
 
     window.onload = function () {
-        validationError = 0 ;
+         validationError = 0 ;
         init();
         var doorNameTypeId              = $('#doorNameTypeIdSelection').val();
         var sizeId                      = $('#oldSize').val();
@@ -60,7 +60,7 @@
 
 
 
-
+    
         var glassOptionId               = $('#oldGlassOption').val();
         var depthId                     = $('#oldGlassDepth').val();
         var handleTypeId                = $('#oldHandleType').val();
@@ -210,7 +210,7 @@
             var doorSize    = $("#doorSizeSelect option:selected").text().split(" x ");
             var strss       = doorSize[0];
             var www         = strss.split("'")[0];
-
+            //alert(www);
             var str         = doorSize[1];
             var height      =  (parseInt(str.substring(0,1)));
 
@@ -235,14 +235,23 @@
                 var select = $('#assemble_knocked_option_select');
                 select.empty().append('<option value="Full Assembled">Full Assembled</option>');
             }*/
-
+            
             var door_idd = document.getElementById('productId').value;
             if(door_idd == 1030 || door_idd == 1031 ){
                 var select = $('#assemble_knocked_option_select');
                 select.empty().append('<option value="Knocked Down">Knocked Down</option>');
             }
 
+            if( door_idd == 1022 || door_idd == 1023  || door_idd == 1024 ||
+                door_idd == 1111 || door_idd == 1098  || door_idd == 1099 ||
+                door_idd == 1100 || door_idd == 1112
+            ){
+                var select = $('#assemble_knocked_option_select');
+                select.empty().append('<option value="Full Assembled">Full Assembled</option>');
+            }
 
+            
+            
             $('#doorSizeSelectError').hide();
             /*if(height >= 8){
                 $("#assemble_knocked_option_select option:contains('Assemble Option')").attr("disabled","disabled");
@@ -442,6 +451,31 @@
                     $('#priceValue').text('');
                     $('#priceValue').text(basePrice);
                     $("#priceValueInput").val(basePrice);
+
+
+                    // change the options for the handlecolorOptionSelect
+                    var selectedTtOri = $("#handleTypeSelect option:selected").text();
+                    //alert(selectedTtOri);
+                    // make the selection of handleTypeSelect
+                    if (selectedTtOri.includes(' ')) {
+                        var selectext = $("#handleTypeSelect option:selected").text().split(' '); // Get selected option text
+                        var hbvd = selectext[0];
+                        //alert(hbvd);
+                        var text_ori;
+                        if(hbvd == 'HPVD') {
+                            //alert('In hcange optoin');
+
+                            $("#handlecolorOptionSelect option").each(function () {
+                                text_ori = $(this).text();
+                                if (text_ori.includes('Brown') || text_ori.includes('White')) {
+                                    $(this).prop("selected", false).prop("disabled", true);
+                                }
+                                /*else{
+                                    $(this).prop("selected", false).prop("disabled", false);
+                                }*/
+                            });
+                        }
+                    }
                 }
             });
         }
@@ -519,6 +553,74 @@
                     $('#priceValue').text(basePrice);
                     $("#priceValueInput").val(basePrice);
                 }
+
+                var selectedTextOri = $("#frameThicknessOptionSelect option:selected").text();
+                // make the selection of mullkitOptionSelect
+                if (selectedTextOri.includes(' ')) {
+                    var selectedText = $("#frameThicknessOptionSelect option:selected").text().split(' '); // Get selected option text
+                }
+                if (selectedTextOri.includes('+')) {
+                    var selectedText = $("#frameThicknessOptionSelect option:selected").text().split('+'); // Get selected option text
+                }
+
+
+                //alert(selectedText[0]);
+                var selec1modi = selectedText[0].slice(0, -1);
+                var mullkit_text_ori;
+                var mullkit_text;
+                var modifiedTexttmp;
+                var modifiedText;
+
+                $("#mullkitOptionSelect option").each(function(){
+                    mullkit_text_ori    = $(this).text();
+                    if (mullkit_text_ori.includes(' ')) {
+                        mullkit_text        = mullkit_text_ori.split(' ')[0];
+                        modifiedText        = mullkit_text.slice(0, -1);
+                    }
+                    if (selectedTextOri.includes('+')) {
+                       // alert('true');
+                        mullkit_text        = mullkit_text_ori.split('+');
+                        modifiedTexttmp     = mullkit_text[0].split(' ')[0];
+                        modifiedText        = modifiedTexttmp.slice(0, -1);
+                    }
+
+
+                   // alert(modifiedText);
+                    //alert( selec1modi);
+                    if (modifiedText === selec1modi) {
+                        $(this).prop("selected", true).prop("disabled", false);
+                        // to enable the option
+
+
+                        // make changes in price too
+                        var mullkitOptionIDArrayTmp = $("#mullkitOptionSelect option:selected").attr('id').split("-");
+                        if (mullkitOptionIDArrayTmp.length >= 1) {
+                            var mulkitOptoiPrice = +mullkitOptionIDArrayTmp[3].trim();
+
+                            $("#mull_kit_pr").val(mulkitOptoiPrice);
+                            var sum = 0;
+                            $('.hiddeee').each(function() {
+                                sum += parseInt($(this).val()) || 0;
+                            });
+                            basePrice = sum;
+                            $('#priceValue').text('');
+                            $('#priceValue').text(basePrice);
+                            $("#priceValueInput").val(basePrice);
+
+                        }
+                    } else {
+                        $(this).prop("disabled", true);
+                        if(mullkit_text_ori === 'No mull kit'){
+                            $(this).prop("disabled", false);
+                        }
+                    }
+
+                });
+                // remove disabled for the
+                // if(mullkit_text == 'No mull kit'){
+                //     $(this).prop("disabled", false);
+                // }
+
             });
         }
 
@@ -550,6 +652,7 @@
         var mulkitEle =  document.getElementById('mullkitOptionSelect');
         if (typeof(mulkitEle) != 'undefined' && mulkitEle != null) {
             mulkitEle.addEventListener('change', function () {
+                var mullkitOptionIDArray = $("#mullkitOptionSelect option:selected").attr('id').split("-");
                 if (mullkitOptionIDArray.length >= 1) {
                     var mulkitOptoiPrice = +mullkitOptionIDArray[3].trim();
 
@@ -614,6 +717,7 @@
 
 
                 }
+
             });
         }
 
@@ -838,7 +942,7 @@
             //if ( glassGridSelectLength >   1 )   {
 
             if ( $( "#glass_grid_ht" ).css('display') != 'none' ){
-                // 'element' is hidden
+                    // 'element' is hidden
 
                 //alert('huhh');
                 if( !glassGridSelectLengV  || glassGridSelectLengV == '') {
@@ -879,16 +983,16 @@
 
 
 
-            doorHandlingSelectLength    = $( "#doorHandlingSelect" ).length;
-            doorHandlingSelectLengV     = $( "#doorHandlingSelect" ).val();
-            if ( doorHandlingSelectLength )   {
-                if( !doorHandlingSelectLengV  || doorHandlingSelectLengV == '') {
-                    $('#doorHandlingSelectError').show();
-                    return false;
-                    event.preventDefault();
-                    e.preventDefault();
-                }
-            }
+             doorHandlingSelectLength    = $( "#doorHandlingSelect" ).length;
+             doorHandlingSelectLengV     = $( "#doorHandlingSelect" ).val();
+             if ( doorHandlingSelectLength )   {
+                 if( !doorHandlingSelectLengV  || doorHandlingSelectLengV == '') {
+                     $('#doorHandlingSelectError').show();
+                     return false;
+                     event.preventDefault();
+                     e.preventDefault();
+                 }
+             }
 
             // Frame thicknessSelect validation
             frameThicknessOptionSelectLength    = $( "#frameThicknessOptionSelect" ).length;
@@ -1184,6 +1288,11 @@
         // for mull kit option
         try {
             var mullkitOptionIDArray = $("#mullkitOptionSelect option:selected").attr('id').split("-");
+            alert(mullkitOptionIDArray[3]);
+            if (mullkitOptionIDArray.length > 1) {
+                var mullkitPrice = +mullkitOptionIDArray[3].trim();
+                basePrice = basePrice + mullkitPrice;
+            }
 
         } catch (e) {
             console.log(e);
@@ -1639,7 +1748,7 @@
             $('#liteOptionSelect').remove();
             //$('#liteOptionSelectPlaceholder').append("<p class='bold noOptionForSize'>No Lite Options available.</p>");
             $('#liteOptionSelectPlaceholder').append("<p class='bold noOptionForSize'>Not Available.</p>");
-
+            
             $('#liteOptionSelectPlaceholder').parent().hide();
         }
 
@@ -1711,7 +1820,7 @@
         }
 
         $('#mullkitOptionSelect').empty();
-        $('#mullkitOptionSelect').append('<option value="">Please select a Mull kit option...</option>');
+        $('#mullkitOptionSelect').append('<option value="">Please select a Mull kit option...</option><option value="0">No mull kit</option>');
         $('.MULL_KIT').each(function () {
             var idArray = $(this).attr('id').split("-");
 

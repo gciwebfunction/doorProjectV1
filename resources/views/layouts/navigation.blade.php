@@ -7,7 +7,9 @@
 <div class="container sticky-top bg-white" style="min-width: 1300px; border-bottom: 1px solid gray">
     <header
         class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4  bg">
-        <a class="navbar-brand" href="{{ url('/') }}">GCI</a>
+{{--        <a class="navbar-brand" href="{{ url('/') }}">GCI</a>--}}
+
+        <img src="{{asset('storage/neumadoor-logo.jpg')}}">
 
         <ul class="nav mb-2 justify-content-center mb-md-0">
 

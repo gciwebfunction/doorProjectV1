@@ -9,6 +9,7 @@ class DirectDealer extends Model
 {
     use HasFactory;
 
+    protected $table = 'users';
     public $fillable = [
         'user_id',
         'distributor_name',
