@@ -214,10 +214,13 @@
             var str         = doorSize[1];
             var height      =  (parseInt(str.substring(0,1)));
 
-            //alert('');
+            //alert('height ==> '+height + 'width ==> '+www);
             //if(www>=10){
             //if(height>=8 && www>=10){
-            if(www>=8 ){
+
+
+            //if(www>=8 ){
+            if(height>=9 && www>=8){
                 //alert
                 //alert('GReater-equal');
                 var select = $('#assemble_knocked_option_select');
@@ -405,31 +408,45 @@
         var liteOptSele =  document.getElementById('liteOptionSelect');
         if (typeof(liteOptSele) != 'undefined' && liteOptSele != null) {
             liteOptSele.addEventListener('change', function () {
+                var lite_text = $("#liteOptionSelect option:selected").text();
+                if(lite_text !='Please select a Lite option...'){
+                    var liteOptionIDArray  = $("#liteOptionSelect option:selected").attr('id').split("-");
 
-                var liteOptionIDArray  = $("#liteOptionSelect option:selected").attr('id').split("-");
+                    if (liteOptionIDArray.length > 1) {
+                        var litePrice = liteOptionIDArray[3].trim();
 
-                if (liteOptionIDArray.length > 1) {
-                    var litePrice = liteOptionIDArray[3].trim();
+                        // $("#oldGlassGrid").val();
+                        // $('#glass_grid_pr').val(0);
 
-                    // $("#oldGlassGrid").val();
-                    // $('#glass_grid_pr').val(0);
-
-                    $("#lite_option_pr").val(litePrice);
-                    $("#liteOptionSelectError").hide();
+                        $("#lite_option_pr").val(litePrice);
+                        $("#liteOptionSelectError").hide();
 
 
-                    $('#oldLiteOptionSelect').val(0);
-                    $('#oldLiteOptionSelect').val(litePrice);
+                        $('#oldLiteOptionSelect').val(0);
+                        $('#oldLiteOptionSelect').val(litePrice);
 
+                        var sum = 0;
+                        $('.hiddeee').each(function() {
+                            sum += parseInt($(this).val()) || 0;
+                        });
+                        basePrice = sum;
+                        $('#priceValue').text('');
+                        $('#priceValue').text(basePrice);
+                        $("#priceValueInput").val(basePrice);
+                    }
+                }else{
+
+                    var oldLiteOptionSelect = parseInt($("#oldLiteOptionSelect").val());
                     var sum = 0;
                     $('.hiddeee').each(function() {
                         sum += parseInt($(this).val()) || 0;
                     });
-                    basePrice = sum;
+                    basePrice = sum-oldLiteOptionSelect;
                     $('#priceValue').text('');
                     $('#priceValue').text(basePrice);
                     $("#priceValueInput").val(basePrice);
                 }
+
             });
         }
 
@@ -462,6 +479,7 @@
                         var hbvd = selectext[0];
                         //alert(hbvd);
                         var text_ori;
+                        var text_oriHi;
                         if(hbvd == 'HPVD') {
                             //alert('In hcange optoin');
 
@@ -470,10 +488,22 @@
                                 if (text_ori.includes('Brown') || text_ori.includes('White')) {
                                     $(this).prop("selected", false).prop("disabled", true);
                                 }
-                                /*else{
-                                    $(this).prop("selected", false).prop("disabled", false);
-                                }*/
+
                             });
+
+                            // make same change for the hinge too
+                            $("#hingecolorOptionSelect option").each(function () {
+                                text_oriHi = $(this).text();
+                                if (text_oriHi.includes('Brown') || text_oriHi.includes('White')) {
+                                    $(this).prop("selected", false).prop("disabled", true);
+                                }
+                            });
+
+                        }else{
+                            // all options enabled
+                            $("#handlecolorOptionSelect").find("option:disabled").prop("disabled",false);
+                            // for the hinge
+                            $("#hingecolorOptionSelect").find("option:disabled").prop("disabled",false);
                         }
                     }
                 }
@@ -861,6 +891,8 @@
                         //document.getElementById(iddddd_comb).style.display = "block";
                         // +'Error';
                         //$(iddddd_comb).show();
+                        return false;
+                        event.preventDefault();
                     }
                 });
 
@@ -1138,17 +1170,12 @@
     });
 
 
-    //$('#assemble_knocked_option_select').ready(function () {
-    //$('#assemble_knocked_option_select').change(function () {
-
-    //});
-    //});
 
 
 
 
+    var basePrice = 0;
     function updatePrice() {
-        var basePrice = 0;
         var glassOptionIDArray;
 
         //var colorSelectArray = $("#doorColorSelect option:selected").text().split("-");

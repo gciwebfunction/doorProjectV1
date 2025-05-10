@@ -196,18 +196,29 @@
 
 
                         if($(this).val() == 'blindselected'){
+
+                            $('#glassGridSelect').prop('selectedIndex',0);
                             $("#glassGridSelect").val('');
+
                             $("#glass_grid_pr").val(0);
 
+                            $('#liteOptionSelect').prop('selectedIndex',0);
+                            $("#liteOptionSelect").val(0);
                             $("#liteOptionSelect").val('');
                             $("#lite_option_pr").val(0);
+                            $("#lite_option_pr").val('');
+
+                            $('#glassOptionSelect').prop('selectedIndex',0);
+                            $("#glassOptionSelect").val('');
+
+
+
+
 
 
                             $('#blind_ht').show();
                             $('#lite_gird_combo').hide();
                             $('#glass_ht,#glass_grid_ht,#lite_ht,#glass_opt').hide();
-
-
 
 
                             //hide the other tions to
@@ -218,8 +229,7 @@
                             //$("#blindGlassliteOptionSelect").val("");
                             //$('#blindGlassliteOptionSelect').prop('selectedIndex',0);
 
-                            $('#glassOptionSelect').prop('selectedIndex',0);
-                            $("#glassOptionSelect").val("");
+
 
                             //$('#glassOptionSelect,#blindGlassliteOptionSelect,#glassGridSelect').val("");
 
@@ -705,14 +715,14 @@
 
     {{--    Hidden options for JS handling--}}
 
+
+    <?php
+//     echo '<pre>';
+//     var_dump($addOn_option);
+//     die;
+    ?>
     <div class="d-none" id="dd-nonnoo">
-        <?php
-//
-//            echo '<pre>';
-//            var_dump($door->additionalOptions);
-//            echo '</pre>';
-//            die;
-        ?>
+
 
 {{--        @foreach($door->additionalOptions as $addOn)--}}
 
@@ -734,6 +744,8 @@
             @else
                 @php
                     $price      = $addOn->price;
+
+
                     //echo $addOn->group_name;die;
                         // change the price calculation
                         if($addOn->group_name == 'GLASS_GRID'){
@@ -741,7 +753,16 @@
                                 if ( str_contains($addOn->name, 'SDL')  &&   (strpos($addOn->name, 'GBG') == false) ){
 
                                         $esxp_arr   = explode('-',$addOn->name);
-                                        $pricetpe   = $esxp_arr[0];
+                                        //echo '<pre>'; var_dump($esxp_arr); echo '</pre>';
+
+                                          $pricetpe   = $esxp_arr[0];
+                                          //echo $pricetpe.'/1---'.'<br>'; echo $addOn->price.'/2---'.'<br>'; echo $door->panel_count.'/3---'.'<br>';
+
+                                        //echo '<pre>'; echo   $addOn->price; echo '</pre>'; echo '<pre>';
+
+
+
+                                        //die;
                                         $price      = ($pricetpe)*($addOn->price)*($door->panel_count);
                                         //$price      = ($pricetpe)*($addOn->price)*($addOn->panel_count);
                                 }else{

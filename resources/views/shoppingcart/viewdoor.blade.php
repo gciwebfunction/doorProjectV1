@@ -82,7 +82,7 @@
                     <tbody>
                     @if($shoppingCart ?? ''  && $cartItemCount > 0)
                         @php foreach($doorViewItems as $item){
-                           // echo '<pre>';var_dump($item);echo '</pre>';
+                            //echo '<pre>';var_dump($item->getGlassGrid());echo '</pre>';
 
                            //echo '<pre>'; var_dump($item);die;
 

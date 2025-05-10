@@ -61,6 +61,11 @@ class CartController extends Controller
     public function addDoorToCart($productId, $cartId)
     {
         $door           = Product\Door\Door::findOrFail($productId);
+
+
+        $door_panel_count = $door->panel_count;
+
+
         $doorPrice      = 0;
         $data           = '';
         $isgliding      = false;
@@ -160,6 +165,9 @@ class CartController extends Controller
 
         $doorName                   = Product\Door\DoorName::findOrFail($data['door_name_type_id_selection']);
 
+
+        //echo '<pre>'; var_dump($data); echo '</pre>'; die;
+
         $doorItem                   = DoorItem::create([
             'shopping_cart_id'      => $cartId,
             'door_id'               => $productId,
@@ -216,8 +224,12 @@ class CartController extends Controller
         if (isset($data['screen_new_option_select']))
             $screenNew = Product\Door\AdditionalOption::find($data['screen_new_option_select']);
 
-        if (isset($data['glass_grid_select']))
+        if (isset($data['glass_grid_select'])){
+            // get the door panel count and multiply it with panel count
+
             $glassGrid = Product\Door\AdditionalOption::find($data['glass_grid_select']);
+            //echo '<pre>'; var_dump($glassGrid); die;
+        }
 
         if (isset($data['blind_option_select']))
             $blindOption = Product\Door\AdditionalOption::find($data['blind_option_select']);
@@ -309,7 +321,14 @@ class CartController extends Controller
 
         // Glass Grid
         if (isset($glassGrid)){
-            $this->saveDoorItemModifier($doorItem->id, 'GLASS_GRID', $glassGrid->name, false, $glassGrid->multiplier, $glassGrid->price);
+            //$this->saveDoorItemModifier($doorItem->id, 'GLASS_GRID', $glassGrid->name, false, $glassGrid->multiplier, $glassGrid->price);
+
+            if (strstr($glassGrid->name, 'SDL')) {
+                $glassGrid_multiplier = $glassGrid->multiplier * $door_panel_count;
+            }else{
+                $glassGrid_multiplier = $glassGrid->multiplier;
+            }
+            $this->saveDoorItemModifier($doorItem->id, 'GLASS_GRID', $glassGrid->name, false, $glassGrid_multiplier, $glassGrid->price);
         }
 
 

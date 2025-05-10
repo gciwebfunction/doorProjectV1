@@ -136,7 +136,17 @@
                 </div>
                 <div class="row p-1 m-1">
                     <div class="col">
-                        <label for="password" class="form-label">Password<span style="color: red">&nbsp;*&nbsp;</span></label>
+                        <label for="password" class="form-label">Password<span style="color: red">&nbsp;*&nbsp;</span>
+                        </label>
+
+                        <ul>
+                            <li>must be of 8 characters in length</li>
+                            <li>must contain at least one lowercase letter</li>
+                            <li>must contain at least one uppercase letter</li>
+                            <li>must contain at least one digit</li>
+
+                        </ul>
+
                     </div>
                     <div class="col">
                         <input type="password" required

@@ -139,17 +139,20 @@ Route::post('/search_result', function () {
 //Route::post('/search_result', '\App\Http\Controllers\Cart\OrderController@search')->name('search');
 
 Route::get('/u/create', 'App\Http\Controllers\DetailedUserController@create')
-    ->middleware('groups:manuf-grp')->name('ucreate');
+    ->middleware('permissions:c_user')->name('ucreate');
+//->middleware('groups:manuf-grp,slsmgr-grp')->name('ucreate');
 
 Route::post('/u', 'App\Http\Controllers\DetailedUserController@store')
-    ->middleware('groups:manuf-grp')->name('ustore');
+    ->middleware('groups:manuf-grp|slsmgr-grp')->name('ustore');
+//Route::post('/u', 'App\Http\Controllers\DetailedUserController@store')
+//    ->middleware('groups:manuf-grp')->name('ustore');
 
 Route::post('/u/update', 'App\Http\Controllers\DetailedUserController@update')
     ->middleware('groups:manuf-grp,dist-grp')->name('uupdate');
 
 Route::get('/u/view', 'App\Http\Controllers\DetailedUserController@view')
     ->middleware('permissions:r_user')->name('uview');
-    //->middleware('permissions:r_user')->name('uview');
+    //->middleware('groups:slsmgr-grp')->name('uview');
 
 Route::get('/u/{id}', '\App\Http\Controllers\DetailedUserController@show')
     ->middleware('groups:manuf-grp')->name('ushow');;
@@ -610,9 +613,20 @@ Route::get('/sc/door/{id}/{doorid}', function ($id, $doorId) {
         if($GBG_grid_SD_siz > 0) $addOn_option = array_merge($addOn_option,$GBG_grid_SD);
 
 
-        ///echo '<pre>'; var_dump($griid_array111); die;
+        //$dpoooo_date = \App\Models\Product\Door\DoorMeasurement::findOrFail($doorId);
+        //echo '<pre>'; var_dump($dpoooo_date); die;
 
 
+
+
+    $door_measurements        =  DB::select("
+                            SELECT  id,width, height 
+                                 FROM door_measurements WHERE door_id = $doorId
+ 
+                            ");
+
+
+    //echo '<pre>'; var_dump($door_measurements); die;
 
 
     //    $addOn_option   =  array_map(function ($value) {
@@ -624,6 +638,7 @@ Route::get('/sc/door/{id}/{doorid}', function ($id, $doorId) {
             'door'              => \App\Models\Product\Door\Door::findOrFail($doorId),
             'addOn_option'      => $addOn_option,
             'door_id'            => $doorId,
+            'door_measurements' => $door_measurements,
 
             'shoppingCart'      => \App\Models\Order\ShoppingCart::findOrFail($id),
             'doorHandlings2'    => \App\Models\Product\Door\DoorHandling::where([

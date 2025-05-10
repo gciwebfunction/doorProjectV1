@@ -154,9 +154,9 @@ class ProductUtility
                 case 'HANDLING':
                     $viewObject->setHandling($modifier->door_modifier_value);
                     break;
-                case 'GLASS_GRID':
-                    $viewObject->setGrid($modifier->door_modifier_value);
-                    break;
+//                case 'GLASS_GRID':
+//                    $viewObject->setGrid($modifier->door_modifier_value);
+//                    break;
                 case 'GLASS_DEPTH':
                     $viewObject->setDepth($modifier->door_modifier_value);
                     break;
