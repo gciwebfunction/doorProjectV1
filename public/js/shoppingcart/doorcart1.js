@@ -220,7 +220,7 @@
 
 
             //if(www>=8 ){
-            if(height>=9 && www>=8){
+            if(height>=9 && www>=9){
                 //alert
                 //alert('GReater-equal');
                 var select = $('#assemble_knocked_option_select');
