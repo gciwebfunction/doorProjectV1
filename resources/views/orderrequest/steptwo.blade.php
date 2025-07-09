@@ -111,7 +111,7 @@
                                 </div>
                                 <div class="form-outline mb-4">
                                     <label class="form-label" for="form7Example4">Expected Shipping date</label>
-                                    <input type="text"
+                                    <input type="date"
                                            class="form-control{{ $errors->has('expected_shipping_date') ? ' is-invalid': '' }}"
                                            id="expected_shipping_date"
                                            name="expected_shipping_date" required placeholder="MM-dd-YYYY" value="{{  date('m-d-Y' , strtotime( '+30 days'))   }}"

@@ -643,42 +643,19 @@
             @endforeach
 
 
-
-
-
-            @php    // if($door->id != 1111) { @endphp
-            <div class="row flex m-3">
+            <div class="row flex m-3" id="assemble_knockedOptionSelectPlaceholder">
                 <div class="col-3" style="text-align: left" >Assemble Option / Knocked Down </div>
-
                 <div class="col-4" id="">
                     <select name="assemble_knock" id="assemble_knocked_option_select" size=""
                             style="width: 400px"  required disabled="disabled">
-{{--                        <option value="">Select an Option</option>--}}
                         <option value="Full Assembled">Full Assembled</option>
-                        @php
-                            if($door->id != 1023 || $door->id != 1024 ||  $door->id != 1022 ||  $door->id != 1098 ||  $door->id != 1099  ||  $door->id != 1100 ||    $door->id != 1112 ) { @endphp
                         <option value="Knocked Down">Knocked Down</option>
-                        @php } @endphp
-
                     </select>
-{{--                    <input type="hidden" id="oldHingecolorOption" value="{{old('hinge_color_option_select')}}">--}}
+                    <input type="hidden" id="oldAssembleKnockOption" value="{{old('assemble_knock_option_select')}}">
                 </div>
             </div>
 
-            @php   /* } else{   */ @endphp
-{{--            <input type="hidden"  name="assemble_knock" id="assemble_knocked_option_select" value="0">--}}
 
-            @php /* } */ @endphp
-
-
-            {{--            <div class="row flex m-3">--}}
-{{--                <div class="col-3" style="text-align: left ; width: 400px;" >PO Number </div>--}}
-
-{{--                <div class="col-4" id="">--}}
-{{--                    <input type="text" name="po_number" required id="po_number" value="{{old('po_number')}}">--}}
-{{--                    --}}{{--                    <input type="hidden" id="oldHingecolorOption" value="{{old('hinge_color_option_select')}}">--}}
-{{--                </div>--}}
-{{--            </div>--}}
 
 
             {{--            NOTES CONTAINER--}}

@@ -269,6 +269,8 @@ Route::get('/p/editdoorflowstepthree/{id}', function ($id) {
     $to_remove = array('GLASS_GRID');
     $uniqueOptions = array_diff($uniqueOptions, $to_remove);
 
+    //echo '<pre>'; var_dump($uniqueOptions); die;
+
     //dd($uniqueOptions);
 
     $doorId = $id;
@@ -488,6 +490,9 @@ Route::get('/sc/deleteItem/{id}', '\App\Http\Controllers\Cart\CartController@del
 Route::get('/sc/deleteDoorItem/{id}', '\App\Http\Controllers\Cart\CartController@deleteCartDoorItem')
     ->middleware('auth')
     ->name('scdeletedooritem');
+
+// For web.php (CSRF token required)
+Route::get('/getHandiCapSillColorOptions/{id}/{door_measurement_id}', '\App\Http\Controllers\Cart\CartController@getHandiCapSillColorOptions' )->name('getHandiCapSillColorOptions');
 
 Route::get('/sc/door/{id}/{doorid}', function ($id, $doorId) {
     //$dorr  = \App\Models\Product\Door\Door::findOrFail($doorId)->sortByDesc('additional_option_values.price');

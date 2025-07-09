@@ -167,6 +167,13 @@ class CartController extends Controller
 
 
         //echo '<pre>'; var_dump($data); echo '</pre>'; die;
+        if (isset($data['assemble_knock'])){
+            $assemble_knock_arr = Product\Door\AdditionalOption::find($data['assemble_knock']);
+            $assemble_knock     = $assemble_knock_arr['name'];
+        }else{
+            $assemble_knock = '';
+        }
+
 
         $doorItem                   = DoorItem::create([
             'shopping_cart_id'      => $cartId,
@@ -177,7 +184,7 @@ class CartController extends Controller
             'quantity'              => $data['quantity'],
             //'quantity'              => 1,
             'price'                 => 0,
-            'assemble_knock'        => $data['assemble_knock']
+            'assemble_knock'        => $assemble_knock
         ]);
 
         // SAVE THE DOOR SIZE
@@ -246,8 +253,13 @@ class CartController extends Controller
         if (isset($data['lock_color_option_select']))
             $lockColorOption = Product\Door\AdditionalOption::find($data['lock_color_option_select']);
 
-        if (isset($data['sill_color_option_select']))
-            $sillColorOption = Product\Door\AdditionalOption::find($data['sill_color_option_select']);
+        if (isset($data['sill_color_option_select'])){
+
+              $sillColorOption = Product\Door\AdditionalOption::find($data['sill_color_option_select']);
+
+              // junki code condition as handicap sill color applied
+
+        }
 
         if (isset($data['hinge_color_option_select']))
             $hingeColorOption = Product\Door\AdditionalOption::find($data['hinge_color_option_select']);
@@ -475,7 +487,27 @@ class CartController extends Controller
     }
 
 
+    //public function getHandiCapSillColorOptions($door_id){
+    public function getHandiCapSillColorOptions($door_id, $door_measurement_id){
 
+        if (empty($door_id) or empty($door_measurement_id)) die;
+        //HANDICAP_SILL_COLOR_OPTION
+        $options = Product\Door\AdditionalOption::where('door_id', $door_id)
+            ->where('group_name', 'HANDICAP_SILL_COLOR_OPTION')
+            ->where('door_measurement_id', $door_measurement_id)
+            ->get();
+        $html = '';
+        //echo '<pre>'; var_dump($options);die;
+
+        foreach ($options as $index => $opt) {
+            //echo '<'
+            $html .= '<option value="' . $opt['id'] . '" class="SILL_COLOR_OPTION addOnOption" id="m-SILL_COLOR_OPTION-' . $opt['door_id'] . '-' . $opt['price'] . '">' . $opt['name'] . '</option>';
+        }
+
+        echo $html;die;
+        //return $options;die;
+
+    }
 
 
     public function deleteCartDoorItem($id)

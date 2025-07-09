@@ -107,6 +107,7 @@ class ProductUtility
                     break;
 
 //                case 'ASSEMBLE_OPTION':
+//                    echo $modifier->door_modifier_value;die;
 //                    $viewObject->setassembleOption($modifier->door_modifier_value);
 //                    break;
 

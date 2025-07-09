@@ -56,13 +56,13 @@
                                         <th>Color</th>
                                         <th>Door Handling</th>
                                         <th>DP Option</th>
-                                        <th>Glass Option</th>
                                         <th>Blind</th>
+                                        <th>Glass Option</th>
                                         <th>Glass Grid</th>
                                         <th>3/4 Lite</th>
-                                        <th>Frame Thickness</th>
                                         <th>Handle</th>
                                         <th>Lock</th>
+                                        <th>Frame Thickness</th>
                                         <th>Sill </th>
                                         <th>Screen</th>
                                         <th>Handle Color</th>
@@ -71,10 +71,10 @@
                                         <th>Hinge Color</th>
                                         <th>Assemble</th>
                                         <th>Qty</th>
-                                        <th>Unit Prices</th>
-{{--                                        <th>Discount</th>--}}
-{{--                                        <th>Discount Val</th>--}}
-                                        <th>Discount Amt</th>
+                                        <th>Unit Price</th>
+                                        <th>Discount</th>
+                                        {{--                                        <th>Discount Val</th>--}}
+                                        {{--                                        <th>Discount Amt</th>--}}
                                         <th>Extention</th>
                                 </tr>
 
@@ -90,15 +90,14 @@
                                             <td>@isset($item['COLOR']){{$item['COLOR']}}@endisset</td>
                                             <td>@isset($item['HANDLING']){{$item['HANDLING']}}@endisset</td>
                                             <td>@isset($item['DP_OPTION']){{$item['DP_OPTION']}}@endisset</td>
-                                            <td>@isset($item['GLASS_OPTION']){{$item['GLASS_OPTION']}}@endisset</td>
                                             <td>@isset($item['BLIND_OPTION']){{$item['BLIND_OPTION']}}@endisset</td>
+                                            <td>@isset($item['GLASS_OPTION']){{$item['GLASS_OPTION']}}@endisset</td>
                                             <td>@isset($item['GLASS_GRID']){{$item['GLASS_GRID']}}@endisset</td>
-                                            <td>@isset($item['LITE_OPTION']){{$item['LITE_OPTION']}}@endisset</td>
-                                            <td>@isset($item['FRAME_THICKNESS_OPTION']){{$item['FRAME_THICKNESS_OPTION']}}@endisset</td>
-                                            <td>@isset($item['SILL_OPTION']){{$item['SILL_OPTION']}}@endisset</td>
 
+                                            <td>@isset($item['LITE_OPTION']){{$item['LITE_OPTION']}}@endisset</td>
                                             <td>@isset($item['HANDLE']){{$item['HANDLE']}}@endisset</td>
                                             <td>@isset($item['LOCK']){{$item['LOCK']}}@endisset</td>
+                                            <td>@isset($item['FRAME_THICKNESS_OPTION']){{$item['FRAME_THICKNESS_OPTION']}}@endisset</td>
                                             <td>@isset($item['SILL_OPTION']){{$item['SILL_OPTION']}}@endisset</td>
                                             <td>@isset($item['SCREEN_OPTION']){{$item['SCREEN_OPTION']}}@endisset</td>
 
@@ -109,12 +108,18 @@
                                             <td>@isset($item['assemble_knock']){{$item['assemble_knock']}}@endisset</td>
 
                                             <td>{{$item['quantity']}} <input type="hidden" value="{{$item['quantity']}}" id="item_qty{{$item['item_id']}}"></td>
-                                            <td>{{sprintf('%0.02f', $item['price'])}} <input type="hidden" value="{{$item['price']}}" id="item_price{{$item['item_id']}}"></td>
+                                            <td> {{sprintf('%0.02f',$item['price'])}} </td>
+                                            {{--                                        <td>{{$item->price*$item->quantity}} </td>--}}
+                                            <?php /*
+                                            <td><select class="form-control" name="discount_type[]" id="amtpe{{$item['item_id']}}" >
+                                                    <option value="%" {{ ($item['discount_type']=="%")? "selected" : "" }}>&nbsp;%&nbsp;</option>
+                                                    <option value="Amt" {{ ($item['discount_type']=="Amt")? "selected" : "" }}>Amt</option>
+                                                </select></td>
 
-                                            <td><input type="text"  readonly name="calculated_discount[]"  value="{{sprintf('%0.02f',$item['calculated_discount'])}}"  class="form-control discountedamt" id="discountedamtind{{$item['item_id']}}" > </td>
-                                            <td>
-                                                <input class="form-control subtotal_price" id="subtotal_price{{$item['item_id']}}"  value="{{sprintf('%0.02f',$item['sub_total'])}}"  name="sub_total[]">
-                                            </td>
+                                            <td><input type="text" readonly name="discount_amount[]"   value="{{$item['discount_amount']}}"  class="form-control discamountcal" id="discamountcal{{$item['item_id']}}" onchange="dis_type('{{$item['item_id']}}')">
+-                                            </td> */?>
+                                            <td> {{sprintf('%0.02f',$item['calculated_discount'])}}  </td>
+                                            <td>{{sprintf('%0.02f',$item['sub_total']) }}   </td>
                                         </tr>
                                         @endforeach
                                     </table>

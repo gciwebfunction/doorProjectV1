@@ -37,6 +37,8 @@
     window.sillcolorOptionSelectHTML        = $('#sillcolorOptionSelect').clone();
     window.hingecolorOptionSelectHTML       = $('#hingecolorOptionSelect').clone();
 
+    window.assembleknockedOptionSelectHTML   = $('#assemble_knocked_option_select').clone();
+
 
     var validationError;
     //validationError = 0 ;
@@ -83,6 +85,8 @@
         var sillColortId                = $('#oldSillcolorOption').val();
         var lockdClrId                  = $('#oldLockcolorOption').val();
         var handlClrId                  = $('#oldHandlecolorOption').val();
+
+        var assembleknockId             = $('#oldAssembleKnockOption').val();
 
 
         // this is taking old value / so commented it out  / so user will
@@ -186,6 +190,10 @@
             $('#handlecolorOptionSelect').val(handlClrId);
         }
 
+        if (assembleknockId && assembleknockId > 0) {
+            $('#assemble_knocked_option_select').val(assembleknockId);
+        }
+
 
     };
 
@@ -202,7 +210,10 @@
             //
 
             setupSelectBoxes();
-            //$("#doorSizeSelect option:selected").text();
+
+
+            var door_text = $("#doorSizeSelect option:selected").text();
+            //alert(door_text);
 
             //assemble_knocked_option_select
 
@@ -216,11 +227,13 @@
 
             //alert('height ==> '+height + 'width ==> '+www);
             //if(www>=10){
-            //if(height>=8 && www>=10){
+            //if(height>=8 && www>=10){ 
 
 
             //if(www>=8 ){
-            if(height>=9 && www>=9){
+
+            /*
+            if(height>=8 && www>=10){
                 //alert
                 //alert('GReater-equal');
                 var select = $('#assemble_knocked_option_select');
@@ -229,7 +242,7 @@
                 //alert('lesser');
                 var select = $('#assemble_knocked_option_select');
                 select.empty().append('<option value="Full Assembled">Full Assembled</option><option value="Knocked Down">Knocked Down</option>');
-            }
+            }*/
 
             // new condition for the knock down
             /*
@@ -240,18 +253,51 @@
             }*/
             
             var door_idd = document.getElementById('productId').value;
-            if(door_idd == 1030 || door_idd == 1031 ){
-                var select = $('#assemble_knocked_option_select');
-                select.empty().append('<option value="Knocked Down">Knocked Down</option>');
-            }
 
-            if( door_idd == 1022 || door_idd == 1023  || door_idd == 1024 ||
-                door_idd == 1111 || door_idd == 1098  || door_idd == 1099 ||
+
+
+            // bypass gliding units
+            /*if(   door_idd == 1030 || door_idd == 1031 ) {
+                if(  www>=9  ) {
+                    var select = $('#assemble_knocked_option_select');
+                    select.empty().append('<option value="Knocked Down">Knocked Down</option>');
+                }
+                if(    height>=9  ) {
+                    var select = $('#assemble_knocked_option_select');
+                    select.empty().append('<option value="Knocked Down">Knocked Down</option>');
+                }
+
+                 if(  www<9 && height<9 ){
+                    var select = $('#assemble_knocked_option_select');
+                    select.empty().append('<option value="Full Assembled">Full Assembled</option><option value="Knocked Down">Knocked Down</option>');
+                }
+                // transom doors
+            }else if(
+                door_idd == 1022 || door_idd == 1023  || door_idd == 1024 ||
+                door_idd == 1098 || door_idd == 1099  || door_idd == 1111 ||
                 door_idd == 1100 || door_idd == 1112
-            ){
+                )
+            {
+
                 var select = $('#assemble_knocked_option_select');
                 select.empty().append('<option value="Full Assembled">Full Assembled</option>');
             }
+            else{
+
+                var select = $('#assemble_knocked_option_select');
+                select.empty().append('<option value="Full Assembled">Full Assembled</option><option value="Knocked Down">Knocked Down</option>');
+
+                if(  www>=9  ) {
+                    var select = $('#assemble_knocked_option_select');
+                    select.empty().append('<option value="Knocked Down">Knocked Down</option>');
+                }
+                if(    height>=9  ) {
+                    var select = $('#assemble_knocked_option_select');
+                    select.empty().append('<option value="Knocked Down">Knocked Down</option>');
+                }
+            }*/
+
+
 
             
             
@@ -655,13 +701,87 @@
         }
 
         // update price sill option
-        var sillOptSle =  document.getElementById('sillOptionSelect');
-        if (typeof(sillOptSle) != 'undefined' && sillOptSle != null) {
-            sillOptSle.addEventListener('change', function () {
+        var sillOptSle = document.getElementById('sillOptionSelect');
 
-                var sillOptionSelectIDArray = $("#sillOptionSelect option:selected").attr('id').split("-");
+            if (typeof(sillOptSle) !== 'undefined' && sillOptSle !== null) {
+                var sillColorOptionSelect = $('#sillcolorOptionSelect');
+            
+                sillOptSle.addEventListener('change', function () {
+                    var dooridd = document.getElementById('productId').value;
+                    //var measurementId = $('#measurementId').val(); // adjust if needed
+                    var measurementId                         = $('#doorSizeSelect').val();
+                    var selectedOption = $("#sillOptionSelect option:selected");
+                    var selectedText = selectedOption.text().trim().toLowerCase();
+                    var sillOptionSelectIDArray = selectedOption.attr('id')?.split("-") || [];
+            
+                    var handleOptions = ' <option id="Mill" value="Mill">Mill</option> <option id="Broze" value="Broze">Broze</option> ';
+            
+                    if (sillOptionSelectIDArray.length > 1 &&
+                        (dooridd == 1001 || dooridd == 1003 || dooridd == 1005 || dooridd == 1006) &&
+                        selectedText.includes('handicap')) {
+            
+                        // Show only handle-type options
+                        //$('#sillcolorOptionSelect').html(handleOptions);
+                        // get the options by ajax
+                        var door_measurement_id = $('#doorSizeSelect').val();
+                        alert(door_measurement_id);
+                        $.ajax({
+                            //url: '{{ route("getHandiCapSillColorOptions") }}',
+                            url: '/getHandiCapSillColorOptions/' + dooridd+'/'+door_measurement_id, // Pass the ID here
 
-                if (sillOptionSelectIDArray.length > 1) {
+                            type: 'GET',
+                            data: {
+                                param: 'Some Value',
+                                _token: $('meta[name="csrf-token"]').attr('content')
+                            },
+                            success: function(response) {
+                                $('#sillcolorOptionSelect').html(response);
+
+                                //console.log(response.data);
+                            },
+                            error: function(xhr) {
+                                console.error(xhr.responseText);
+                            }
+                        });
+
+
+                    } else {
+                        // Dynamically rebuild color options based on measurementId
+                        var sillcolorOptionForSpecificSizeCount = 0;
+            
+                        // If select was previously removed (due to no options), re-insert it
+                        if ($('#sillcolorOptionSelect').length == 0) {
+                            $('#sillcolorOptionSelectPlaceholder').append(this.sillcolorOptionSelectHTML);
+                        }
+            
+                        $('#sillcolorOptionSelect').empty();
+                        $('#sillcolorOptionSelect').append('<option value="">Please select a SILL color option...</option>');
+            
+                        $('.SILL_COLOR_OPTION').each(function () {
+                            //var idArray = $(this).attr('id').split("-");
+                            
+                              var idAttr = $(this).attr('id') || "";
+                var idArray = idAttr.split("-");
+                //console.log("Inspecting .SILL_COLOR_OPTION id:", idAttr, "-> parsed:", idArray);
+
+                if (idArray.length >= 3 && idArray[2] == measurementId) {
+                                sillcolorOptionForSpecificSizeCount++;
+                                $('#sillcolorOptionSelect').append($(this).clone());
+                            }
+                        });
+            
+                        $('#sillcolorOptionSelect').removeAttr('disabled');
+            
+                        if (sillcolorOptionForSpecificSizeCount == 0) {
+                            $('#sillcolorOptionSelect').remove();
+                            $('#sillcolorOptionSelectPlaceholder').append("<p class='bold noOptionForSize'>No Sill Color options available.</p>");
+                            $('#sillcolorOptionSelectPlaceholder').parent().hide();
+                        }
+                    }
+
+                    
+
+
                     var sillPrice = +sillOptionSelectIDArray[3].trim();
                     $('#sillOptionSelectError').hide();
                     $("#sill_pr").val(sillPrice);
@@ -674,8 +794,7 @@
                     $('#priceValue').text(basePrice);
                     $("#priceValueInput").val(basePrice);
 
-                }
-            });
+                });
         }
 
         // update price mull kit
@@ -1502,10 +1621,14 @@
         var sillOptionForSpecificSizeCount        = 0;
         var screennewOptionForSpecificSizeCount   = 0;
         var mullKitForSpecificSizeCount           = 0;
+        var assembleKnockForSpecificSizeCount     = 0;
 
         var hardwareColorForSizeCount             = 0;
         var lockColorForSizeCount                 = 0;
         var sillcolorOptionForSpecificSizeCount   = 0;
+        
+        
+        
         var hingecolorOptionForSpecificSizeCount  = 0;
 
         var handleColorForSizeCount               = 0;
@@ -1863,6 +1986,32 @@
             $('#mullkitOptionSelectPlaceholder').append("<p class='bold noOptionForSize'>No Mull kit options available.</p>");
         }
 
+
+
+        // ****************************************
+        // ASSEMBLE KNOCK  SELECT DYNAMIC UPDATES
+        // ****************************************
+
+        if ($('#assemble_knocked_option_select').length == 0) {
+            $('#assemble_knockedOptionSelectPlaceholder').append(this.assembleknockedOptionSelectHTML);
+        }
+
+        $('#assemble_knocked_option_select').empty();
+        $('#assemble_knocked_option_select').append('<option value="">Please select a Assemble / Knock...</option>');
+        $('.ASSEMBLE_KNOCK').each(function () {
+            var idArray = $(this).attr('id').split("-");
+
+            if (idArray[2] == measurementId) {
+                assembleKnockForSpecificSizeCount++;
+                $('#assemble_knocked_option_select').append($(this).clone());
+            }
+        });
+        $('#assemble_knocked_option_select').removeAttr('disabled');
+
+        if (assembleKnockForSpecificSizeCount == 0) {
+            $('#assemble_knocked_option_select').remove();
+            $('#assemble_knockedOptionSelectPlaceholder').append("<p class='bold noOptionForSize'>No options available.</p>");
+        }
 
 
 

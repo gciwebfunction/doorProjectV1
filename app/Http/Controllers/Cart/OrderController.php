@@ -128,8 +128,9 @@ class OrderController extends Controller
 
 
         $time                   = $data['expected_shipping_date'];
-        $date_expp              = Carbon::createFromFormat('m-d-Y', $time);
-        $exp_shipping_date      = $date_expp->format('Y-m-d');
+        //$date_expp              = Carbon::createFromFormat('m-d-Y', $time);
+        //$exp_shipping_date      = $date_expp->format('Y-m-d');
+        $exp_shipping_date      = date ('Y-m-d' , strtotime($time));
 
         $shipping_instruction   = $data['shipping_instruction'];
         $package_instruction    = $data['package_instruction'];
