@@ -714,7 +714,7 @@
                     var selectedText = selectedOption.text().trim().toLowerCase();
                     var sillOptionSelectIDArray = selectedOption.attr('id')?.split("-") || [];
             
-                    var handleOptions = ' <option id="Mill" value="Mill">Mill</option> <option id="Broze" value="Broze">Broze</option> ';
+                   // var handleOptions = ' <option id="Mill" value="Mill">Mill</option> <option id="Broze" value="Broze">Broze</option> ';
             
                     if (sillOptionSelectIDArray.length > 1 &&
                         (dooridd == 1001 || dooridd == 1003 || dooridd == 1005 || dooridd == 1006) &&
@@ -724,7 +724,7 @@
                         //$('#sillcolorOptionSelect').html(handleOptions);
                         // get the options by ajax
                         var door_measurement_id = $('#doorSizeSelect').val();
-                        alert(door_measurement_id);
+                        //alert(door_measurement_id);
                         $.ajax({
                             //url: '{{ route("getHandiCapSillColorOptions") }}',
                             url: '/getHandiCapSillColorOptions/' + dooridd+'/'+door_measurement_id, // Pass the ID here
