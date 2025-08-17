@@ -16,38 +16,25 @@ $group_name     = 'GLASS_GRID';
 $query          = "select id from door_measurements where door_id  = $door_id   order by id asc ";
 $res            = mysqli_query($con , $query);
 
+//  2,3,4,6,8,10,12,15, 18 lite option,
+$arrs  = ['2-Lite GBG','3-Lite GBG','4-Lite GBG','6-Lite GBG' ,'8-Lite GBG','10-Lite GBG','12-Lite GBG','15-Lite GBG','18-Lite GBG' ];
+
+
 if($res>=1) {
     //measurements loop
     while($ressss   = mysqli_fetch_array($res)){
         $measure_id             =  $ressss['id'];
 
-        echo   $swl10 = "INSERT INTO `additional_option_values`
-            (`name`, `group_name`, `price`, `is_per_panel`, `is_per_light`, `door_id`, `door_measurement_id`, `image_id`, `created_at`,
-             `updated_at`, `disabled`, `has_price`, `multiplier`, `is_custom_option`) VALUES
-            ( '10-Lite GBG', '$group_name',   0, 0, 1, $door_id, $measure_id, -1, '2025-07-31 00:00:00', 
-             '2025-07-25 00:00:00', 0, 1, 1, -1);";
-        echo '<br>';
-
-        echo   $swl10 = "INSERT INTO `additional_option_values`
-            (`name`, `group_name`, `price`, `is_per_panel`, `is_per_light`, `door_id`, `door_measurement_id`, `image_id`, `created_at`,
-             `updated_at`, `disabled`, `has_price`, `multiplier`, `is_custom_option`) VALUES
-            ( '12-Lite GBG', '$group_name',   0, 0, 1, $door_id, $measure_id, -1, '2025-07-31 00:00:00', 
-             '2025-07-25 00:00:00', 0, 1, 1, -1);";
-        echo '<br>';
-        echo   $swl10 = "INSERT INTO `additional_option_values`
-            (`name`, `group_name`, `price`, `is_per_panel`, `is_per_light`, `door_id`, `door_measurement_id`, `image_id`, `created_at`,
-             `updated_at`, `disabled`, `has_price`, `multiplier`, `is_custom_option`) VALUES
-            ( '15-Lite GBG', '$group_name',   0, 0, 1, $door_id, $measure_id, -1, '2025-07-31 00:00:00', 
-             '2025-07-25 00:00:00', 0, 1, 1, -1);";
-        echo '<br>';
-        echo   $swl10 = "INSERT INTO `additional_option_values`
-            (`name`, `group_name`, `price`, `is_per_panel`, `is_per_light`, `door_id`, `door_measurement_id`, `image_id`, `created_at`,
-             `updated_at`, `disabled`, `has_price`, `multiplier`, `is_custom_option`) VALUES
-            ( '18-Lite GBG', '$group_name',   0, 0, 1, $door_id, $measure_id, -1, '2025-07-31 00:00:00', 
-             '2025-07-25 00:00:00', 0, 1, 1, -1);";
-        echo '<br>';
 
 
+            foreach ($arrs as $arr  ) {
+                echo   $swl10 = "INSERT INTO `additional_option_values`
+                    (`name`, `group_name`, `price`, `is_per_panel`, `is_per_light`, `door_id`, `door_measurement_id`, `image_id`, `created_at`,
+                     `updated_at`, `disabled`, `has_price`, `multiplier`, `is_custom_option`) VALUES
+                    ( '".$arr."', '$group_name',   0, 0, 1, $door_id, $measure_id, -1, '2025-07-31 00:00:00', 
+                     '2025-07-25 00:00:00', 0, 1, 1, -1);";
+                echo '<br>';
+            }
 
     }
 
